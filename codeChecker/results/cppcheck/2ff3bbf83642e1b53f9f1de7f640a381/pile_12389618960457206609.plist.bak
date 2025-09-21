@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+ <key>clang_version</key>
+<string>cppcheck version 2.13.0</string>
+ <key>files</key>
+ <array>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/pile.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/pile.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/card.h</string>
+ </array>
+ <key>diagnostics</key>
+ <array>
+  <dict>
+   <key>path</key>
+   <array>
+    <dict>
+     <key>kind</key><string>event</string>
+     <key>location</key>
+     <dict>
+      <key>line</key><integer>13</integer>
+      <key>col</key><integer>5</integer>
+      <key>file</key><integer>1</integer>
+     </dict>
+     <key>ranges</key>
+     <array>
+       <array>
+        <dict>
+         <key>line</key><integer>13</integer>
+         <key>col</key><integer>5</integer>
+         <key>file</key><integer>1</integer>
+        </dict>
+        <dict>
+         <key>line</key><integer>13</integer>
+         <key>col</key><integer>5</integer>
+         <key>file</key><integer>1</integer>
+        </dict>
+       </array>
+     </array>
+     <key>depth</key><integer>0</integer>
+     <key>extended_message</key>
+     <string>Member variable &apos;Pile::wildColor&apos; is not initialized in the constructor.</string>
+     <key>message</key>
+     <string>Member variable &apos;Pile::wildColor&apos; is not initialized in the constructor.</string>
+    </dict>
+   </array>
+   <key>description</key><string>Member variable &apos;Pile::wildColor&apos; is not initialized in the constructor.</string>
+   <key>category</key><string>warning</string>
+   <key>type</key><string>Member variable &apos;Pile::wildColor&apos; is not initialized in the constructor.</string>
+   <key>check_name</key><string>uninitMemberVar</string>
+   <!-- This hash is experimental and going to change! -->
+   <key>issue_hash_content_of_line_in_context</key><string>0</string>
+  <key>issue_context_kind</key><string></string>
+  <key>issue_context</key><string></string>
+  <key>issue_hash_function_offset</key><string></string>
+  <key>location</key>
+  <dict>
+   <key>line</key><integer>13</integer>
+   <key>col</key><integer>5</integer>
+   <key>file</key><integer>1</integer>
+  </dict>
+  </dict>
+ </array>
+</dict>
+</plist>

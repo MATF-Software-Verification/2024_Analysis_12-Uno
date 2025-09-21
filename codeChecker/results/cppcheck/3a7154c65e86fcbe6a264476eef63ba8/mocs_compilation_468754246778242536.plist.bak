@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+ <key>clang_version</key>
+<string>cppcheck version 2.13.0</string>
+ <key>files</key>
+ <array>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/mocs_compilation.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_client.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_game.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_gameGUI.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_gameclient.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_instructionsWidget.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_lobby.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build/UNO_autogen/K6S233IZAZ/moc_mainWindow.cpp</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/mainWindow.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/gameGUI.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/gameParameters.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/instructionsWidget.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/leaderboards.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/lobby.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/client.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/server.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/game.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/card.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/deck.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/pile.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/gameclient.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/gameserver.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/human.h</string>
+  <string>/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/pc.h</string>
+ </array>
+ <key>diagnostics</key>
+ <array>
+ </array>
+</dict>
+</plist>

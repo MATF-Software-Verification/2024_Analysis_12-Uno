@@ -1,0 +1,19 @@
+---
+MainSourceFile:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/mainWindow.cpp'
+Diagnostics:
+  - DiagnosticName:  clang-diagnostic-double-promotion
+    DiagnosticMessage:
+      Message:         'implicit conversion increases floating-point precision: ''float'' to ''qreal'' (aka ''double'')'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/mainWindow.cpp'
+      FileOffset:      8245
+      Replacements:    []
+      Ranges:
+        - FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/mainWindow.cpp'
+          FileOffset:      8245
+          Length:          197
+        - FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/mainWindow.cpp'
+          FileOffset:      8230
+          Length:          12
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+...

@@ -1,0 +1,16 @@
+---
+MainSourceFile:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp'
+Diagnostics:
+  - DiagnosticName:  clang-diagnostic-unused-variable
+    DiagnosticMessage:
+      Message:         'unused variable ''fail'''
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp'
+      FileOffset:      581
+      Replacements:    []
+      Ranges:
+        - FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp'
+          FileOffset:      581
+          Length:          4
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+...

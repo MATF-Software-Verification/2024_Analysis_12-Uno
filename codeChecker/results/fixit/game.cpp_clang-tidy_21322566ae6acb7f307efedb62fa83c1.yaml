@@ -1,0 +1,28 @@
+---
+MainSourceFile:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp'
+Diagnostics:
+  - DiagnosticName:  bugprone-switch-missing-default-case
+    DiagnosticMessage:
+      Message:         switching on non-enum value without default case may not cover all cases
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp'
+      FileOffset:      634
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  bugprone-signed-char-misuse
+    DiagnosticMessage:
+      Message:         '''signed char'' to ''int'' conversion; consider casting to ''unsigned char'' first.'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp'
+      FileOffset:      7989
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  bugprone-signed-char-misuse
+    DiagnosticMessage:
+      Message:         '''signed char'' to ''int'' conversion; consider casting to ''unsigned char'' first.'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp'
+      FileOffset:      8145
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+...

@@ -1,0 +1,12 @@
+---
+MainSourceFile:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/instructionsWidget.cpp'
+Diagnostics:
+  - DiagnosticName:  clang-diagnostic-unused-parameter
+    DiagnosticMessage:
+      Message:         'unused parameter ''event'''
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/instructionsWidget.cpp'
+      FileOffset:      431
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+...

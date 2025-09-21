@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plist HTML Viewer</title>
+
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+      .severity-low {
+  background-color: #669603;
+}
+
+.severity-low:after {
+  content : 'L';
+}
+
+.severity-unspecified {
+  background-color: #666666;
+}
+
+.severity-unspecified:after {
+  content : 'U';
+}
+
+.severity-style {
+  background-color: #9932cc;
+}
+
+.severity-style:after {
+  content : 'S';
+}
+
+.severity-medium {
+  background-color: #a9d323;
+  color: black;
+}
+
+.severity-medium:after {
+  content : 'M';
+}
+
+.severity-high {
+  background-color: #ffa800;
+}
+
+.severity-high:after {
+  content : 'H';
+}
+
+.severity-critical {
+  background-color: #e92625;
+}
+
+.severity-critical:after {
+  content : 'C';
+}
+
+i[class*="severity-"] {
+  line-height: normal;
+  text-transform: capitalize;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+      html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+div.container {
+  padding: 10px;
+}
+
+#content {
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+#content > div {
+  margin: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  height: 97%;
+}
+
+#side-bar {
+  overflow: auto;
+}
+
+#editor-wrapper {
+  overflow: hidden;
+}
+
+.button {
+  background-color: #f1f1f1;
+  text-decoration: none;
+  display: inline-block;
+  padding: 8px 16px;
+  color: black;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.review-status {
+  color: white;
+  text-align: center;
+}
+
+.review-status-confirmed {
+  background-color: #e92625;
+}
+
+.review-status-false-positive {
+  background-color: grey;
+}
+
+.review-status-intentional {
+  background-color: #669603;
+}
+
+      table th {
+  font-size: 1.2em;
+  color: #fff;
+  line-height: 1.4;
+  background-color: #007ea7;
+}
+
+table th.active,
+table th.sortable:hover {
+  cursor: pointer;
+  background-color: #2da6ce;
+}
+
+table tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+table tr > td {
+  padding: 5px;
+}
+
+      #report-list-table {
+  width: 100%;
+}
+
+#report-list .bug-path-length {
+  width: 5%;
+  text-align: center;
+}
+
+#report-list .severity {
+  text-align: center;
+}
+
+    </style>
+
+    <script>
+      function setNonCompatibleBrowserMessage() {
+  document.body.innerHTML =
+    '<h2 style="margin-left: 20px;">Your browser is not compatible with CodeChecker Viewer!</h2> \
+     <p style="margin-left: 20px;">The version required for the following browsers are:</p> \
+     <ul style="margin-left: 20px;"> \
+     <li>Internet Explorer: version 9 or newer</li> \
+     <li>Firefox: version 22.0 or newer</li> \
+     </ul>';
+}
+
+// http://stackoverflow.com/questions/5916900/how-can-you-detect-the-version-of-a-browser
+var browserVersion = (function(){
+  var ua = navigator.userAgent, tem,
+    M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+
+  if (/trident/i.test(M[1])) {
+    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+    return 'IE ' + (tem[1] || '');
+  }
+
+  if (M[1] === 'Chrome') {
+    tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+    if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+  }
+
+  M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+  if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+    return M.join(' ');
+})();
+
+var pos = browserVersion.indexOf(' ');
+var browser = browserVersion.substr(0, pos);
+var version = parseInt(browserVersion.substr(pos + 1));
+
+var browserCompatible
+  = browser === 'Firefox'
+  ? version >= 22
+  : browser === 'IE'
+  ? version >= 9
+  : true;
+
+      // -------------------------------------------------------------------------
+//  Part of the CodeChecker project, under the Apache License v2.0 with
+//  LLVM Exceptions. See LICENSE for license information.
+//  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+// -------------------------------------------------------------------------
+
+var BugList = {
+
+  _urlHash : function () {
+    var state = {};
+    window.location.hash.substring(1).split('&').forEach(function (s) {
+      var parts = s.split('=');
+      state[parts[0]] = parts[1];
+    });
+    return state;
+  },
+
+  _cmp3 : function (a, b) {
+    if (a === null)
+      return -1;
+    else if (b === null)
+      return 1;
+    else
+      return a < b ? -1 : a > b ? 1 : 0;
+  },
+
+  initTableSort : function () {
+    var that = this;
+
+    var table = document.getElementById('report-list-table');
+    table.querySelectorAll('th').forEach(function (column) {
+      column.addEventListener('click', function () {
+        var state = that._urlHash();
+
+        var asc = state.sort === column.id
+          ? !parseInt(state.asc)
+          : !!parseInt(state.asc);
+
+        that.sort(column.id, asc);
+        that.load();
+      });
+      column.classList.add('sortable');
+    });
+  },
+
+  initBugPathLength : function () {
+    var that = this;
+
+    document.querySelectorAll('.bug-path-length').forEach(
+    function (widget) {
+      widget.style.backgroundColor =
+        that.generateRedGreenGradientColor(widget.innerHTML, 20, 0.5);
+    });
+  },
+
+  initByUrl : function () {
+    var state = this._urlHash();
+    var column = state['sort'] ? state['sort'] : 'file-path';
+    var asc = state['asc'] ? !!parseInt(state['asc']) : true;
+    this.initTableSort();
+    this.sort(column, asc);
+    this.load();
+  },
+
+  generateRedGreenGradientColor : function (value, max, opacity) {
+    var red   = (255 * value) / max;
+    var green = (255 * (max - value)) / max;
+    var blue  = 0;
+    return 'rgba(' + parseInt(red) + ',' + parseInt(green) + ',' + blue
+      + ',' + opacity + ')';
+  },
+
+  sort : function (columnId, asc) {
+    var that = this;
+
+    var severities = ['STYLE', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+
+    function compare(a, b) {
+      var result;
+
+      switch (columnId)
+      {
+        case 'file-path':
+          result = that._cmp3(
+            [a['file-path'], a['line']],
+            [b['file-path'], b['line']]);
+          break;
+
+        case 'severity':
+          result = that._cmp3(
+            severities.indexOf(a['severity']),
+            severities.indexOf(b['severity']));
+          break;
+
+        default:
+          result = that._cmp3(a[columnId], b[columnId]);
+          break;
+      }
+
+      return asc ? result : -result;
+    }
+
+    reports.sort(compare);
+    window.location.hash = '#sort=' + columnId + '&asc=' + (asc ? 1 : 0);
+  },
+
+  buildRow : function (data, id) {
+    let row = document.createElement('tr');
+
+    let id_col = document.createElement('td');
+    id_col.appendChild(document.createTextNode(id));
+    row.appendChild(id_col);
+
+    let file_col = document.createElement('td');
+    let file_col_a = document.createElement('a');
+    file_col_a.setAttribute(
+      'href', data.link + '#reportHash=' + data['report-hash']);
+    file_col_a.innerHTML = data['file-path'] + ' @ Line&nbsp;' + data.line;
+    file_col.appendChild(file_col_a);
+    row.appendChild(file_col);
+
+    let severity_col = document.createElement('td');
+    severity_col.setAttribute('class', 'severity');
+    let severity_col_i = document.createElement('i');
+    severity_col_i.setAttribute(
+      'class', 'severity-' + data.severity.toLowerCase());
+    severity_col_i.setAttribute('title', data.severity);
+    severity_col.appendChild(severity_col_i);
+    row.appendChild(severity_col);
+
+    let checker_col = document.createElement('td');
+    let checker_col_a = document.createElement('a');
+    checker_col_a.setAttribute('href', data['checker-url']);
+    checker_col_a.setAttribute('target', '_blank');
+    checker_col_a.appendChild(
+      document.createTextNode(data['checker-name']));
+    checker_col.appendChild(checker_col_a);
+    row.appendChild(checker_col);
+
+    let message_col = document.createElement('td');
+    message_col.appendChild(document.createTextNode(data.message));
+    row.appendChild(message_col);
+
+    let length_col = document.createElement('td');
+    length_col.setAttribute('class', 'bug-path-length');
+    length_col.appendChild(document.createTextNode(data['bug-path-length']));
+    row.appendChild(length_col);
+
+    let review_col = document.createElement('td');
+    review_col.appendChild(document.createTextNode(data['review-status']));
+    row.appendChild(review_col);
+
+    let testcase_col = document.createElement('td');
+    testcase_col.setAttribute('class', 'dynamic');
+    testcase_col.appendChild(
+      document.createTextNode(data['testcase'] || ''));
+    row.appendChild(testcase_col);
+
+    let timestamp_col = document.createElement('td');
+    timestamp_col.setAttribute('class', 'dynamic');
+    timestamp_col.appendChild(
+      document.createTextNode(data['timestamp'] || ''));
+    row.appendChild(timestamp_col);
+
+    let chronological_col = document.createElement('td');
+    chronological_col.setAttribute('class', 'dynamic');
+    chronological_col.appendChild(
+      document.createTextNode(data['chronological-order'] || ''));
+      row.appendChild(chronological_col);
+
+    return row;
+  },
+
+  loadTable : function (pageNo, pageSize) {
+    var startIdx = (pageNo - 1) * pageSize;
+    var endIdx = Math.min(startIdx + pageSize, reports.length);
+
+    var report_list = document.getElementById('report-list');
+    report_list.innerHTML = '';
+
+    var dynamic_cols_needed = false;
+
+    for (var i = startIdx; i < endIdx; ++i) {
+      report_list.appendChild(this.buildRow(reports[i], i + 1));
+
+      if (reports[i]['testcase'] || reports[i]['timestamp'] || reports[i]['chronological-order'])
+        dynamic_cols_needed = true;
+    }
+
+    for (var tag of document.getElementsByClassName('dynamic'))
+      if (dynamic_cols_needed)
+        tag.style.removeProperty('display');
+      else
+        tag.style.display = 'none';
+
+    this.initBugPathLength();
+  },
+
+  loadPageNumber : function () {
+    var pageSize = parseInt(document.getElementById('page-size').value);
+    var pageCount = Math.ceil(reports.length / pageSize);
+
+    var pageNumber = document.getElementById('page-number');
+    pageNumber.innerHTML = '';
+
+    for (var i = 1; i <= pageCount; ++i) {
+      var option = document.createElement('option');
+      option.setAttribute('value', i);
+      option.innerHTML = i;
+      pageNumber.appendChild(option);
+    }
+  },
+
+  selectPage : function (pageNumber) {
+    var pageSize = parseInt(document.getElementById('page-size').value);
+    this.loadTable(pageNumber, pageSize);
+  },
+
+  prevPage : function () {
+    var pageNumber = document.getElementById('page-number');
+    pageNumber.value = Math.max(parseInt(pageNumber.value) - 1, 1);
+    this.selectPage(pageNumber.value);
+  },
+
+  nextPage : function () {
+    var pageNumber = document.getElementById('page-number');
+    pageNumber.value = Math.min(
+      parseInt(pageNumber.value) + 1,
+      pageNumber.children.length);
+    this.selectPage(pageNumber.value);
+  },
+
+  load : function () {
+    var pageSize = parseInt(document.getElementById('page-size').value);
+
+    this.loadPageNumber();
+    this.loadTable(1, pageSize);
+  }
+};
+
+
+      var reports = [{"link": "deck.cpp_clangsa_3361d0ddbd72736610a0db2990cccdfb.plist.html", "file-path": "/home/marija/Qt/6.5.3/gcc_64/include/QtCore/qanystringview.h", "report-hash": "a25e8de8c76fb6c2da2c1ed351161c50", "checker-name": "core.NullDereference", "checker-url": "https://clang.llvm.org/docs/analyzer/checkers.html#core-nulldereference-c-c-objc", "line": 121, "message": "Array access (from variable 'str') results in a null pointer dereference", "review-status": "Unreviewed", "severity": "HIGH", "bug-path-length": 13, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "157f4cb7f182bf3ef3c5304229886b8d", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Client::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "8f1864be33b92ac2ab27f074cb6f410f", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Client::totalNumOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "a9999ae59f93d37059fc8d98816a1424", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Client::_gameMode' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "a4c2f8c7fa045a96217e775e26d16229", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Client::mainPlayerIndex' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "7f4fe8e562e8a392f612dcb2c769f9bc", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Client::_isHost' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "19b87d0ee4e9c736aa9d4529a2346d5f", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 18, "message": "Member variable 'Client::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "d941d90389a0e9c480c9543e9e901a3d", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 18, "message": "Member variable 'Client::totalNumOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "e2f49a7f531abe261152f06a4184bdc2", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 18, "message": "Member variable 'Client::_gameMode' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "client.cpp_cppcheck_4d569a3535c31ed126def7db79091281.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/client.cpp", "report-hash": "64fe292297f4c55910f2db1cd4323c59", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 18, "message": "Member variable 'Client::mainPlayerIndex' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "instructionsWidget.cpp_clang-tidy_7fc516b97cbdb352574e1f311835a36c.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/instructionsWidget.cpp", "report-hash": "b5cd047a61060d0942893629bfdd1669", "checker-name": "clang-diagnostic-unused-parameter", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wunused-parameter", "line": 18, "message": "unused parameter 'event'", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "wildcard.cpp_cppcheck_5a937b9dc94e44e7ce195f75a9ba672f.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/wildcard.h", "report-hash": "8a4721bbd45e39a4ab1cd0ad3802918a", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 9, "message": "Member variable 'WildCard::chosenColor' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "wildcard.cpp_cppcheck_5a937b9dc94e44e7ce195f75a9ba672f.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/wildcard.cpp", "report-hash": "c06ab9dbb49938439f23ca17745f2d70", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 7, "message": "Member variable 'WildCard::chosenColor' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "wildcard.cpp_cppcheck_5a937b9dc94e44e7ce195f75a9ba672f.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/wildcard.cpp", "report-hash": "444a4314e8c71bb8eb19992d6fb00a4a", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'WildCard::chosenColor' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "c23f35173d4993b0cd1787340714eaf1", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameServer::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "67d5b496bb74e3fc3a989066aed8f9ab", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameServer::_game' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "e297b23f5f62155001e4cd794d2f8583", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameServer::_numberOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "19b25fb71cd592e80a2dd28169e53a1b", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameServer::_stopWaiting' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "29e94c2744eaafd8df04c96359c52646", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'GameServer::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameserver.cpp_cppcheck_3de217ad4222394a5098e11a2a03a920.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameserver.cpp", "report-hash": "26be759b7afccf37a704b8d8186543da", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'GameServer::_numberOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "e569790a6c9e4e2a704d511a169a245a", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'Server::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "15ef3fca9142bf8524127facfba61408", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'Server::_game' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "207730a878a68c88b7ad133d9d30192e", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'Server::_numberOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "8d6edecce28b527c9c5e599b39e1254e", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'Server::_stopWaiting' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "169c8498ce258f6e4a219979128bf7fd", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'Server::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_cppcheck_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "e04890a4001c9d2b094839d41aca9271", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'Server::_numberOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "mainWindow.cpp_clang-tidy_af4331791baabcdf65d797dc68a27402.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/mainWindow.cpp", "report-hash": "06e69487d1b71781f4ed7172ac9bb0e0", "checker-name": "clang-diagnostic-double-promotion", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wdouble-promotion", "line": 259, "message": "implicit conversion increases floating-point precision: 'float' to 'qreal' (aka 'double')", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h", "report-hash": "51ed59ed073f556c0735b451f4673b6d", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 11, "message": "Member variable 'Player::previousPlayer' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h", "report-hash": "17b0a43345cc22d7743791ad41a6b63e", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 11, "message": "Member variable 'Player::_score' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h", "report-hash": "393a993c11b77c66e4a4dc19eedae408", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 11, "message": "Member variable 'Player::pile' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h", "report-hash": "7d1f9371eaa287412674abdcee5cc32d", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 11, "message": "Member variable 'Player::_saidUNO' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/player.h", "report-hash": "8ba3be39bcf19527d055fef21a2fb619", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 11, "message": "Member variable 'Player::_playedCard' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/player.cpp", "report-hash": "f6f9aa5658509d58020d393d563678e2", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 10, "message": "Member variable 'Player::previousPlayer' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/player.cpp", "report-hash": "4adaa394e30066aa61e56a7d6c5d8285", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 10, "message": "Member variable 'Player::pile' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "player.cpp_cppcheck_364a95c5d1b536063b9ca40f29d04087.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/player.cpp", "report-hash": "00d0b438c50edd4ccfcb15bad2632aa3", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 10, "message": "Member variable 'Player::_playedCard' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "f6ac69d89e48fd20b34a5d9eda5e84c5", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_isOver' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "b58d1f30f2a57314c699c2510dc5c9f0", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::gameMode' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "6be3324d1db8352e0c600bb55a31301d", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_currentPlayer' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "65f020bf53abf15f5f3cada9658de0a3", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::deck' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "bb8559ee903103aeeccc78af3e136b4c", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::pile' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "c9c9b707d0aedaec1c53cbd93117ff3c", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::gameDirection' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "23a2c81d9f5ebaa00b2d06afb32b1d94", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::mainPlayer' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "161b5c98fcdd29faf07bdd3d6d1b435b", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_isOnline' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "61d30b47779f7db92e794043ed2bc587", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_numOfPlayers' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "89c5e1df67026c8efbcc8a78d95e332f", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_winner' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "c4e7ae8a17ef86c2d6790722a3f8a7b3", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::mainPlayerIndex' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_cppcheck_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "73206ddf77cfb32c6affecad5065e406", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'Game::_chosenPlayer' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "server.cpp_clang-tidy_63e27906bae0e61e0119c90f86d382a6.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/server.cpp", "report-hash": "aa826fd8f120873df38b64de9a00236e", "checker-name": "clang-diagnostic-unused-variable", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wunused-variable", "line": 32, "message": "unused variable 'fail'", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "pile.cpp_cppcheck_2ff3bbf83642e1b53f9f1de7f640a381.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/pile.h", "report-hash": "f0a28c1fd8b6c355bca00a41434663c0", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 13, "message": "Member variable 'Pile::wildColor' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_clang-tidy_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "05ff6b37931fbb84abda5f5f1cb34d95", "checker-name": "bugprone-switch-missing-default-case", "checker-url": "https://clang.llvm.org/extra/clang-tidy/checks/bugprone/switch-missing-default-case.html", "line": 36, "message": "switching on non-enum value without default case may not cover all cases", "review-status": "Unreviewed", "severity": "LOW", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_clang-tidy_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "b829633f545c56b67d8e6eb4a08e44a0", "checker-name": "bugprone-signed-char-misuse", "checker-url": "https://clang.llvm.org/extra/clang-tidy/checks/bugprone/signed-char-misuse.html", "line": 348, "message": "'signed char' to 'int' conversion; consider casting to 'unsigned char' first.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "game.cpp_clang-tidy_21322566ae6acb7f307efedb62fa83c1.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/game.cpp", "report-hash": "3f1283b08ba26f39f6a15ca8b7fefaf9", "checker-name": "bugprone-signed-char-misuse", "checker-url": "https://clang.llvm.org/extra/clang-tidy/checks/bugprone/signed-char-misuse.html", "line": 355, "message": "'signed char' to 'int' conversion; consider casting to 'unsigned char' first.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clangsa_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/usr/lib/llvm-18/lib/clang/18/include/cetintrin.h", "report-hash": "a95dbc87e7d4eb8c0bbf73c1ce08c6bb", "checker-name": "core.CallAndMessage", "checker-url": "https://clang.llvm.org/docs/analyzer/checkers.html#core-callandmessage-c-c-objc", "line": 49, "message": "1st function call argument is an uninitialized value", "review-status": "Unreviewed", "severity": "HIGH", "bug-path-length": 2, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clangsa_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/usr/lib/llvm-18/lib/clang/18/include/cetintrin.h", "report-hash": "076fdab99b1790475cd59e47054be43f", "checker-name": "core.CallAndMessage", "checker-url": "https://clang.llvm.org/docs/analyzer/checkers.html#core-callandmessage-c-c-objc", "line": 62, "message": "1st function call argument is an uninitialized value", "review-status": "Unreviewed", "severity": "HIGH", "bug-path-length": 2, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "ea47b77deb8a21324087c33de3fb6427", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 27, "message": "identifier '_width' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "2f1a8ee8c9221a9a20e63cf75d7445c9", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 28, "message": "identifier '_height' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "fe378c34d9a535cbb2bc411e253b4160", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 31, "message": "identifier '_frameWidth' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "1ace3097ae75f7742929872b84cfe3fd", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 32, "message": "identifier '_frameHeight' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "3dfa34ea1ca802fef5ecda38bc083cca", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 35, "message": "identifier '_reducedWidth' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "28321084a4f03b09a87beb796b761436", "checker-name": "clang-diagnostic-reserved-identifier", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wreserved-identifier", "line": 36, "message": "identifier '_reducedHeight' is reserved because it starts with '_' at global scope", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameGUI.cpp_clang-tidy_87557f4cf83e32990f52e20ae088a1c0.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp", "report-hash": "0ffffc320b2ee23da806fae934ab8454", "checker-name": "clang-diagnostic-unused-parameter", "checker-url": "https://clang.llvm.org/docs/DiagnosticsReference.html#wunused-parameter", "line": 952, "message": "unused parameter 'event'", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "card.cpp_cppcheck_a17bbe78288fa3106d77e862f2cce598.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/card.h", "report-hash": "4d0f657e5ff8449c52f55fec29f55eab", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 28, "message": "Member variable 'Card::color' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "card.cpp_cppcheck_a17bbe78288fa3106d77e862f2cce598.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/card.h", "report-hash": "fca5d2f4d38969a46efcfe37bef419b6", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 28, "message": "Member variable 'Card::cardType' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "card.cpp_cppcheck_a17bbe78288fa3106d77e862f2cce598.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/card.h", "report-hash": "114f60728f8d2e72255449789bccc196", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 28, "message": "Member variable 'Card::cardNum' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "bd12654a6a428b47b5c728877fee57f5", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameClient::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "d84507ef579dc38e24cbc521aafd4791", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameClient::_game' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "780d2c11d2592ed1da518ffd446fc780", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameClient::_myIndex' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "ee615cbf13f14ecc5c38fb2b72d971e3", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 12, "message": "Member variable 'GameClient::_isHost' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "fa606b730363a5eae406680056f7b04f", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'GameClient::sockfd' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "gameclient.cpp_cppcheck_a94d3ff6c5bb6ef72ce9de609ec23a33.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameclient.cpp", "report-hash": "88e77942a8c0d7d6433ab3c900f83590", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 17, "message": "Member variable 'GameClient::_myIndex' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "pc.cpp_cppcheck_abceb2864bab009c8ff221fc56a89d67.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/pc.h", "report-hash": "f3fd822e40858dc0c06183883291254c", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 14, "message": "Member variable 'PC::_game' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}, {"link": "human.cpp_cppcheck_3600af1222ed5de4eda4bd9533a031bb.plist.html", "file-path": "/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/headers/human.h", "report-hash": "37a8b17e81eeefcaadfe50abaa957926", "checker-name": "cppcheck-uninitMemberVar", "checker-url": "", "line": 9, "message": "Member variable 'Human::_game' is not initialized in the constructor.", "review-status": "Unreviewed", "severity": "MEDIUM", "bug-path-length": 1, "testcase": null, "timestamp": null, "chronological-order": null}];
+
+      window.onload = function () {
+        if (!browserCompatible) {
+          setNonCompatibleBrowserMessage();
+        } else {
+          BugList.initByUrl();
+        }
+      }
+    </script>
+  </head>
+  <body>
+  <div class="container">
+    <a href="statistics.html" class="button">Go To Statistics</a>
+    <table id="report-list-table">
+      <thead>
+        <tr>
+          <th id="report-id">&nbsp;</th>
+          <th id="file-path">File</th>
+          <th id="severity">Severity</th>
+          <th id="checker-name">Checker name</th>
+          <th id="message">Message</th>
+          <th id="bug-path-length">Bug path length</th>
+          <th id="review-status">Review status</th>
+          <th id="testcase" class="dynamic">Testcase</th>
+          <th id="timestamp" class="dynamic">Timestamp</th>
+          <th id="chronological-order" class="dynamic">Chronological order</th>
+        </tr>
+      </thead>
+      <tbody id="report-list">
+      </tbody>
+    </table>
+
+    <select id="page-size" onchange="BugList.initByUrl()">
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+
+    <button onclick="BugList.prevPage()">&lt;</button>
+    <select id="page-number" onchange="BugList.selectPage(this.value)"></select>
+    <button onclick="BugList.nextPage()">&gt;</button>
+  </div>
+  </body>
+</html>

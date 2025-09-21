@@ -1,0 +1,60 @@
+---
+MainSourceFile:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+Diagnostics:
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_width'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      626
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_height'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      645
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_frameWidth'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      699
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_frameHeight'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      722
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_reducedWidth'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      777
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-reserved-identifier
+    DiagnosticMessage:
+      Message:         'identifier ''_reducedHeight'' is reserved because it starts with ''_'' at global scope'
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      802
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+  - DiagnosticName:  clang-diagnostic-unused-parameter
+    DiagnosticMessage:
+      Message:         'unused parameter ''event'''
+      FilePath:        '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/sources/gameGUI.cpp'
+      FileOffset:      30549
+      Replacements:    []
+    Level:           Warning
+    BuildDirectory:  '/home/marija/Desktop/2024_Analysis_12-Uno/12-UNO/UNO/build'
+...

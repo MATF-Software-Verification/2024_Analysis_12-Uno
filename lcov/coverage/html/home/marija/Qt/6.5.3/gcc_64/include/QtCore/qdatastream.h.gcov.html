@@ -1,0 +1,635 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage_filtered.info - home/marija/Qt/6.5.3/gcc_64/include/QtCore/qdatastream.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../index.html">top level</a> - <a href="index.html">/home/marija/Qt/6.5.3/gcc_64/include/QtCore</a> - qdatastream.h<span style="font-size: 80%;"> (source / <a href="qdatastream.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage_filtered.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-09-22 16:04:43</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (C) 2021 The Qt Company Ltd.</span>
+<span id="L2"><span class="lineNum">       2</span>              : // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only</span>
+<span id="L3"><span class="lineNum">       3</span>              : </span>
+<span id="L4"><span class="lineNum">       4</span>              : #ifndef QDATASTREAM_H</span>
+<span id="L5"><span class="lineNum">       5</span>              : #define QDATASTREAM_H</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : #include &lt;QtCore/qscopedpointer.h&gt;</span>
+<span id="L8"><span class="lineNum">       8</span>              : #include &lt;QtCore/qiodevicebase.h&gt;</span>
+<span id="L9"><span class="lineNum">       9</span>              : #include &lt;QtCore/qcontainerfwd.h&gt;</span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &lt;QtCore/qnamespace.h&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              : #ifdef Status</span>
+<span id="L13"><span class="lineNum">      13</span>              : #error qdatastream.h must be included before any header file that defines Status</span>
+<span id="L14"><span class="lineNum">      14</span>              : #endif</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              : QT_BEGIN_NAMESPACE</span>
+<span id="L17"><span class="lineNum">      17</span>              : </span>
+<span id="L18"><span class="lineNum">      18</span>              : #if QT_CORE_REMOVED_SINCE(6, 3)</span>
+<span id="L19"><span class="lineNum">      19</span>              : class qfloat16;</span>
+<span id="L20"><span class="lineNum">      20</span>              : #endif</span>
+<span id="L21"><span class="lineNum">      21</span>              : class QByteArray;</span>
+<span id="L22"><span class="lineNum">      22</span>              : class QIODevice;</span>
+<span id="L23"><span class="lineNum">      23</span>              : </span>
+<span id="L24"><span class="lineNum">      24</span>              : #if !defined(QT_NO_DATASTREAM) || defined(QT_BOOTSTRAPPED)</span>
+<span id="L25"><span class="lineNum">      25</span>              : class QDataStreamPrivate;</span>
+<span id="L26"><span class="lineNum">      26</span>              : namespace QtPrivate {</span>
+<span id="L27"><span class="lineNum">      27</span>              : class StreamStateSaver;</span>
+<span id="L28"><span class="lineNum">      28</span>              : }</span>
+<span id="L29"><span class="lineNum">      29</span>              : class Q_CORE_EXPORT QDataStream : public QIODeviceBase</span>
+<span id="L30"><span class="lineNum">      30</span>              : {</span>
+<span id="L31"><span class="lineNum">      31</span>              : public:</span>
+<span id="L32"><span class="lineNum">      32</span>              :     enum Version {</span>
+<span id="L33"><span class="lineNum">      33</span>              :         Qt_1_0 = 1,</span>
+<span id="L34"><span class="lineNum">      34</span>              :         Qt_2_0 = 2,</span>
+<span id="L35"><span class="lineNum">      35</span>              :         Qt_2_1 = 3,</span>
+<span id="L36"><span class="lineNum">      36</span>              :         Qt_3_0 = 4,</span>
+<span id="L37"><span class="lineNum">      37</span>              :         Qt_3_1 = 5,</span>
+<span id="L38"><span class="lineNum">      38</span>              :         Qt_3_3 = 6,</span>
+<span id="L39"><span class="lineNum">      39</span>              :         Qt_4_0 = 7,</span>
+<span id="L40"><span class="lineNum">      40</span>              :         Qt_4_1 = Qt_4_0,</span>
+<span id="L41"><span class="lineNum">      41</span>              :         Qt_4_2 = 8,</span>
+<span id="L42"><span class="lineNum">      42</span>              :         Qt_4_3 = 9,</span>
+<span id="L43"><span class="lineNum">      43</span>              :         Qt_4_4 = 10,</span>
+<span id="L44"><span class="lineNum">      44</span>              :         Qt_4_5 = 11,</span>
+<span id="L45"><span class="lineNum">      45</span>              :         Qt_4_6 = 12,</span>
+<span id="L46"><span class="lineNum">      46</span>              :         Qt_4_7 = Qt_4_6,</span>
+<span id="L47"><span class="lineNum">      47</span>              :         Qt_4_8 = Qt_4_7,</span>
+<span id="L48"><span class="lineNum">      48</span>              :         Qt_4_9 = Qt_4_8,</span>
+<span id="L49"><span class="lineNum">      49</span>              :         Qt_5_0 = 13,</span>
+<span id="L50"><span class="lineNum">      50</span>              :         Qt_5_1 = 14,</span>
+<span id="L51"><span class="lineNum">      51</span>              :         Qt_5_2 = 15,</span>
+<span id="L52"><span class="lineNum">      52</span>              :         Qt_5_3 = Qt_5_2,</span>
+<span id="L53"><span class="lineNum">      53</span>              :         Qt_5_4 = 16,</span>
+<span id="L54"><span class="lineNum">      54</span>              :         Qt_5_5 = Qt_5_4,</span>
+<span id="L55"><span class="lineNum">      55</span>              :         Qt_5_6 = 17,</span>
+<span id="L56"><span class="lineNum">      56</span>              :         Qt_5_7 = Qt_5_6,</span>
+<span id="L57"><span class="lineNum">      57</span>              :         Qt_5_8 = Qt_5_7,</span>
+<span id="L58"><span class="lineNum">      58</span>              :         Qt_5_9 = Qt_5_8,</span>
+<span id="L59"><span class="lineNum">      59</span>              :         Qt_5_10 = Qt_5_9,</span>
+<span id="L60"><span class="lineNum">      60</span>              :         Qt_5_11 = Qt_5_10,</span>
+<span id="L61"><span class="lineNum">      61</span>              :         Qt_5_12 = 18,</span>
+<span id="L62"><span class="lineNum">      62</span>              :         Qt_5_13 = 19,</span>
+<span id="L63"><span class="lineNum">      63</span>              :         Qt_5_14 = Qt_5_13,</span>
+<span id="L64"><span class="lineNum">      64</span>              :         Qt_5_15 = Qt_5_14,</span>
+<span id="L65"><span class="lineNum">      65</span>              :         Qt_6_0 = 20,</span>
+<span id="L66"><span class="lineNum">      66</span>              :         Qt_6_1 = Qt_6_0,</span>
+<span id="L67"><span class="lineNum">      67</span>              :         Qt_6_2 = Qt_6_0,</span>
+<span id="L68"><span class="lineNum">      68</span>              :         Qt_6_3 = Qt_6_0,</span>
+<span id="L69"><span class="lineNum">      69</span>              :         Qt_6_4 = Qt_6_0,</span>
+<span id="L70"><span class="lineNum">      70</span>              :         Qt_6_5 = Qt_6_0,</span>
+<span id="L71"><span class="lineNum">      71</span>              :         Qt_DefaultCompiledVersion = Qt_6_5</span>
+<span id="L72"><span class="lineNum">      72</span>              : #if QT_VERSION &gt;= QT_VERSION_CHECK(6, 6, 0)</span>
+<span id="L73"><span class="lineNum">      73</span>              : #error Add the datastream version for this Qt version and update Qt_DefaultCompiledVersion</span>
+<span id="L74"><span class="lineNum">      74</span>              : #endif</span>
+<span id="L75"><span class="lineNum">      75</span>              :     };</span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              :     enum ByteOrder {</span>
+<span id="L78"><span class="lineNum">      78</span>              :         BigEndian = QSysInfo::BigEndian,</span>
+<span id="L79"><span class="lineNum">      79</span>              :         LittleEndian = QSysInfo::LittleEndian</span>
+<span id="L80"><span class="lineNum">      80</span>              :     };</span>
+<span id="L81"><span class="lineNum">      81</span>              : </span>
+<span id="L82"><span class="lineNum">      82</span>              :     enum Status {</span>
+<span id="L83"><span class="lineNum">      83</span>              :         Ok,</span>
+<span id="L84"><span class="lineNum">      84</span>              :         ReadPastEnd,</span>
+<span id="L85"><span class="lineNum">      85</span>              :         ReadCorruptData,</span>
+<span id="L86"><span class="lineNum">      86</span>              :         WriteFailed</span>
+<span id="L87"><span class="lineNum">      87</span>              :     };</span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span>              :     enum FloatingPointPrecision {</span>
+<span id="L90"><span class="lineNum">      90</span>              :         SinglePrecision,</span>
+<span id="L91"><span class="lineNum">      91</span>              :         DoublePrecision</span>
+<span id="L92"><span class="lineNum">      92</span>              :     };</span>
+<span id="L93"><span class="lineNum">      93</span>              : </span>
+<span id="L94"><span class="lineNum">      94</span>              :     QDataStream();</span>
+<span id="L95"><span class="lineNum">      95</span>              :     explicit QDataStream(QIODevice *);</span>
+<span id="L96"><span class="lineNum">      96</span>              :     QDataStream(QByteArray *, OpenMode flags);</span>
+<span id="L97"><span class="lineNum">      97</span>              :     QDataStream(const QByteArray &amp;);</span>
+<span id="L98"><span class="lineNum">      98</span>              :     ~QDataStream();</span>
+<span id="L99"><span class="lineNum">      99</span>              : </span>
+<span id="L100"><span class="lineNum">     100</span>              :     QIODevice *device() const;</span>
+<span id="L101"><span class="lineNum">     101</span>              :     void setDevice(QIODevice *);</span>
+<span id="L102"><span class="lineNum">     102</span>              : </span>
+<span id="L103"><span class="lineNum">     103</span>              :     bool atEnd() const;</span>
+<span id="L104"><span class="lineNum">     104</span>              : </span>
+<span id="L105"><span class="lineNum">     105</span>              :     Status status() const;</span>
+<span id="L106"><span class="lineNum">     106</span>              :     void setStatus(Status status);</span>
+<span id="L107"><span class="lineNum">     107</span>              :     void resetStatus();</span>
+<span id="L108"><span class="lineNum">     108</span>              : </span>
+<span id="L109"><span class="lineNum">     109</span>              :     FloatingPointPrecision floatingPointPrecision() const;</span>
+<span id="L110"><span class="lineNum">     110</span>              :     void setFloatingPointPrecision(FloatingPointPrecision precision);</span>
+<span id="L111"><span class="lineNum">     111</span>              : </span>
+<span id="L112"><span class="lineNum">     112</span>              :     ByteOrder byteOrder() const;</span>
+<span id="L113"><span class="lineNum">     113</span>              :     void setByteOrder(ByteOrder);</span>
+<span id="L114"><span class="lineNum">     114</span>              : </span>
+<span id="L115"><span class="lineNum">     115</span>              :     int version() const;</span>
+<span id="L116"><span class="lineNum">     116</span>              :     void setVersion(int);</span>
+<span id="L117"><span class="lineNum">     117</span>              : </span>
+<span id="L118"><span class="lineNum">     118</span>              :     QDataStream &amp;operator&gt;&gt;(char &amp;i);</span>
+<span id="L119"><span class="lineNum">     119</span>              :     QDataStream &amp;operator&gt;&gt;(qint8 &amp;i);</span>
+<span id="L120"><span class="lineNum">     120</span>              :     QDataStream &amp;operator&gt;&gt;(quint8 &amp;i);</span>
+<span id="L121"><span class="lineNum">     121</span>              :     QDataStream &amp;operator&gt;&gt;(qint16 &amp;i);</span>
+<span id="L122"><span class="lineNum">     122</span>              :     QDataStream &amp;operator&gt;&gt;(quint16 &amp;i);</span>
+<span id="L123"><span class="lineNum">     123</span>              :     QDataStream &amp;operator&gt;&gt;(qint32 &amp;i);</span>
+<span id="L124"><span class="lineNum">     124</span>              :     inline QDataStream &amp;operator&gt;&gt;(quint32 &amp;i);</span>
+<span id="L125"><span class="lineNum">     125</span>              :     QDataStream &amp;operator&gt;&gt;(qint64 &amp;i);</span>
+<span id="L126"><span class="lineNum">     126</span>              :     QDataStream &amp;operator&gt;&gt;(quint64 &amp;i);</span>
+<span id="L127"><span class="lineNum">     127</span>              :     QDataStream &amp;operator&gt;&gt;(std::nullptr_t &amp;ptr) { ptr = nullptr; return *this; }</span>
+<span id="L128"><span class="lineNum">     128</span>              : </span>
+<span id="L129"><span class="lineNum">     129</span>              :     QDataStream &amp;operator&gt;&gt;(bool &amp;i);</span>
+<span id="L130"><span class="lineNum">     130</span>              : #if QT_CORE_REMOVED_SINCE(6, 3)</span>
+<span id="L131"><span class="lineNum">     131</span>              :     QDataStream &amp;operator&gt;&gt;(qfloat16 &amp;f);</span>
+<span id="L132"><span class="lineNum">     132</span>              : #endif</span>
+<span id="L133"><span class="lineNum">     133</span>              :     QDataStream &amp;operator&gt;&gt;(float &amp;f);</span>
+<span id="L134"><span class="lineNum">     134</span>              :     QDataStream &amp;operator&gt;&gt;(double &amp;f);</span>
+<span id="L135"><span class="lineNum">     135</span>              :     QDataStream &amp;operator&gt;&gt;(char *&amp;str);</span>
+<span id="L136"><span class="lineNum">     136</span>              :     QDataStream &amp;operator&gt;&gt;(char16_t &amp;c);</span>
+<span id="L137"><span class="lineNum">     137</span>              :     QDataStream &amp;operator&gt;&gt;(char32_t &amp;c);</span>
+<span id="L138"><span class="lineNum">     138</span>              : </span>
+<span id="L139"><span class="lineNum">     139</span>              :     QDataStream &amp;operator&lt;&lt;(char i);</span>
+<span id="L140"><span class="lineNum">     140</span>              :     QDataStream &amp;operator&lt;&lt;(qint8 i);</span>
+<span id="L141"><span class="lineNum">     141</span>              :     QDataStream &amp;operator&lt;&lt;(quint8 i);</span>
+<span id="L142"><span class="lineNum">     142</span>              :     QDataStream &amp;operator&lt;&lt;(qint16 i);</span>
+<span id="L143"><span class="lineNum">     143</span>              :     QDataStream &amp;operator&lt;&lt;(quint16 i);</span>
+<span id="L144"><span class="lineNum">     144</span>              :     QDataStream &amp;operator&lt;&lt;(qint32 i);</span>
+<span id="L145"><span class="lineNum">     145</span>              :     inline QDataStream &amp;operator&lt;&lt;(quint32 i);</span>
+<span id="L146"><span class="lineNum">     146</span>              :     QDataStream &amp;operator&lt;&lt;(qint64 i);</span>
+<span id="L147"><span class="lineNum">     147</span>              :     QDataStream &amp;operator&lt;&lt;(quint64 i);</span>
+<span id="L148"><span class="lineNum">     148</span>              :     QDataStream &amp;operator&lt;&lt;(std::nullptr_t) { return *this; }</span>
+<span id="L149"><span class="lineNum">     149</span>              :     QDataStream &amp;operator&lt;&lt;(bool i);</span>
+<span id="L150"><span class="lineNum">     150</span>              : #if QT_CORE_REMOVED_SINCE(6, 3)</span>
+<span id="L151"><span class="lineNum">     151</span>              :     QDataStream &amp;operator&lt;&lt;(qfloat16 f);</span>
+<span id="L152"><span class="lineNum">     152</span>              : #endif</span>
+<span id="L153"><span class="lineNum">     153</span>              :     QDataStream &amp;operator&lt;&lt;(float f);</span>
+<span id="L154"><span class="lineNum">     154</span>              :     QDataStream &amp;operator&lt;&lt;(double f);</span>
+<span id="L155"><span class="lineNum">     155</span>              :     QDataStream &amp;operator&lt;&lt;(const char *str);</span>
+<span id="L156"><span class="lineNum">     156</span>              :     QDataStream &amp;operator&lt;&lt;(char16_t c);</span>
+<span id="L157"><span class="lineNum">     157</span>              :     QDataStream &amp;operator&lt;&lt;(char32_t c);</span>
+<span id="L158"><span class="lineNum">     158</span>              : </span>
+<span id="L159"><span class="lineNum">     159</span>              : </span>
+<span id="L160"><span class="lineNum">     160</span>              :     QDataStream &amp;readBytes(char *&amp;, uint &amp;len);</span>
+<span id="L161"><span class="lineNum">     161</span>              :     int readRawData(char *, int len);</span>
+<span id="L162"><span class="lineNum">     162</span>              : </span>
+<span id="L163"><span class="lineNum">     163</span>              :     QDataStream &amp;writeBytes(const char *, uint len);</span>
+<span id="L164"><span class="lineNum">     164</span>              :     int writeRawData(const char *, int len);</span>
+<span id="L165"><span class="lineNum">     165</span>              : </span>
+<span id="L166"><span class="lineNum">     166</span>              :     int skipRawData(int len);</span>
+<span id="L167"><span class="lineNum">     167</span>              : </span>
+<span id="L168"><span class="lineNum">     168</span>              :     void startTransaction();</span>
+<span id="L169"><span class="lineNum">     169</span>              :     bool commitTransaction();</span>
+<span id="L170"><span class="lineNum">     170</span>              :     void rollbackTransaction();</span>
+<span id="L171"><span class="lineNum">     171</span>              :     void abortTransaction();</span>
+<span id="L172"><span class="lineNum">     172</span>              : </span>
+<span id="L173"><span class="lineNum">     173</span>              :     bool isDeviceTransactionStarted() const;</span>
+<span id="L174"><span class="lineNum">     174</span>              : private:</span>
+<span id="L175"><span class="lineNum">     175</span>              :     Q_DISABLE_COPY(QDataStream)</span>
+<span id="L176"><span class="lineNum">     176</span>              : </span>
+<span id="L177"><span class="lineNum">     177</span>              :     QScopedPointer&lt;QDataStreamPrivate&gt; d;</span>
+<span id="L178"><span class="lineNum">     178</span>              : </span>
+<span id="L179"><span class="lineNum">     179</span>              :     QIODevice *dev;</span>
+<span id="L180"><span class="lineNum">     180</span>              :     bool owndev;</span>
+<span id="L181"><span class="lineNum">     181</span>              :     bool noswap;</span>
+<span id="L182"><span class="lineNum">     182</span>              :     ByteOrder byteorder;</span>
+<span id="L183"><span class="lineNum">     183</span>              :     int ver;</span>
+<span id="L184"><span class="lineNum">     184</span>              :     Status q_status;</span>
+<span id="L185"><span class="lineNum">     185</span>              : </span>
+<span id="L186"><span class="lineNum">     186</span>              :     int readBlock(char *data, int len);</span>
+<span id="L187"><span class="lineNum">     187</span>              :     friend class QtPrivate::StreamStateSaver;</span>
+<span id="L188"><span class="lineNum">     188</span>              : };</span>
+<span id="L189"><span class="lineNum">     189</span>              : </span>
+<span id="L190"><span class="lineNum">     190</span>              : namespace QtPrivate {</span>
+<span id="L191"><span class="lineNum">     191</span>              : </span>
+<span id="L192"><span class="lineNum">     192</span>              : class StreamStateSaver</span>
+<span id="L193"><span class="lineNum">     193</span>              : {</span>
+<span id="L194"><span class="lineNum">     194</span>              : public:</span>
+<span id="L195"><span class="lineNum">     195</span>              :     inline StreamStateSaver(QDataStream *s) : stream(s), oldStatus(s-&gt;status())</span>
+<span id="L196"><span class="lineNum">     196</span>              :     {</span>
+<span id="L197"><span class="lineNum">     197</span>              :         if (!stream-&gt;isDeviceTransactionStarted())</span>
+<span id="L198"><span class="lineNum">     198</span>              :             stream-&gt;resetStatus();</span>
+<span id="L199"><span class="lineNum">     199</span>              :     }</span>
+<span id="L200"><span class="lineNum">     200</span>              :     inline ~StreamStateSaver()</span>
+<span id="L201"><span class="lineNum">     201</span>              :     {</span>
+<span id="L202"><span class="lineNum">     202</span>              :         if (oldStatus != QDataStream::Ok) {</span>
+<span id="L203"><span class="lineNum">     203</span>              :             stream-&gt;resetStatus();</span>
+<span id="L204"><span class="lineNum">     204</span>              :             stream-&gt;setStatus(oldStatus);</span>
+<span id="L205"><span class="lineNum">     205</span>              :         }</span>
+<span id="L206"><span class="lineNum">     206</span>              :     }</span>
+<span id="L207"><span class="lineNum">     207</span>              : </span>
+<span id="L208"><span class="lineNum">     208</span>              : private:</span>
+<span id="L209"><span class="lineNum">     209</span>              :     QDataStream *stream;</span>
+<span id="L210"><span class="lineNum">     210</span>              :     QDataStream::Status oldStatus;</span>
+<span id="L211"><span class="lineNum">     211</span>              : };</span>
+<span id="L212"><span class="lineNum">     212</span>              : </span>
+<span id="L213"><span class="lineNum">     213</span>              : template &lt;typename Container&gt;</span>
+<span id="L214"><span class="lineNum">     214</span>              : QDataStream &amp;readArrayBasedContainer(QDataStream &amp;s, Container &amp;c)</span>
+<span id="L215"><span class="lineNum">     215</span>              : {</span>
+<span id="L216"><span class="lineNum">     216</span>              :     StreamStateSaver stateSaver(&amp;s);</span>
+<span id="L217"><span class="lineNum">     217</span>              : </span>
+<span id="L218"><span class="lineNum">     218</span>              :     c.clear();</span>
+<span id="L219"><span class="lineNum">     219</span>              :     quint32 n;</span>
+<span id="L220"><span class="lineNum">     220</span>              :     s &gt;&gt; n;</span>
+<span id="L221"><span class="lineNum">     221</span>              :     c.reserve(n);</span>
+<span id="L222"><span class="lineNum">     222</span>              :     for (quint32 i = 0; i &lt; n; ++i) {</span>
+<span id="L223"><span class="lineNum">     223</span>              :         typename Container::value_type t;</span>
+<span id="L224"><span class="lineNum">     224</span>              :         s &gt;&gt; t;</span>
+<span id="L225"><span class="lineNum">     225</span>              :         if (s.status() != QDataStream::Ok) {</span>
+<span id="L226"><span class="lineNum">     226</span>              :             c.clear();</span>
+<span id="L227"><span class="lineNum">     227</span>              :             break;</span>
+<span id="L228"><span class="lineNum">     228</span>              :         }</span>
+<span id="L229"><span class="lineNum">     229</span>              :         c.append(t);</span>
+<span id="L230"><span class="lineNum">     230</span>              :     }</span>
+<span id="L231"><span class="lineNum">     231</span>              : </span>
+<span id="L232"><span class="lineNum">     232</span>              :     return s;</span>
+<span id="L233"><span class="lineNum">     233</span>              : }</span>
+<span id="L234"><span class="lineNum">     234</span>              : </span>
+<span id="L235"><span class="lineNum">     235</span>              : template &lt;typename Container&gt;</span>
+<span id="L236"><span class="lineNum">     236</span>              : QDataStream &amp;readListBasedContainer(QDataStream &amp;s, Container &amp;c)</span>
+<span id="L237"><span class="lineNum">     237</span>              : {</span>
+<span id="L238"><span class="lineNum">     238</span>              :     StreamStateSaver stateSaver(&amp;s);</span>
+<span id="L239"><span class="lineNum">     239</span>              : </span>
+<span id="L240"><span class="lineNum">     240</span>              :     c.clear();</span>
+<span id="L241"><span class="lineNum">     241</span>              :     quint32 n;</span>
+<span id="L242"><span class="lineNum">     242</span>              :     s &gt;&gt; n;</span>
+<span id="L243"><span class="lineNum">     243</span>              :     for (quint32 i = 0; i &lt; n; ++i) {</span>
+<span id="L244"><span class="lineNum">     244</span>              :         typename Container::value_type t;</span>
+<span id="L245"><span class="lineNum">     245</span>              :         s &gt;&gt; t;</span>
+<span id="L246"><span class="lineNum">     246</span>              :         if (s.status() != QDataStream::Ok) {</span>
+<span id="L247"><span class="lineNum">     247</span>              :             c.clear();</span>
+<span id="L248"><span class="lineNum">     248</span>              :             break;</span>
+<span id="L249"><span class="lineNum">     249</span>              :         }</span>
+<span id="L250"><span class="lineNum">     250</span>              :         c &lt;&lt; t;</span>
+<span id="L251"><span class="lineNum">     251</span>              :     }</span>
+<span id="L252"><span class="lineNum">     252</span>              : </span>
+<span id="L253"><span class="lineNum">     253</span>              :     return s;</span>
+<span id="L254"><span class="lineNum">     254</span>              : }</span>
+<span id="L255"><span class="lineNum">     255</span>              : </span>
+<span id="L256"><span class="lineNum">     256</span>              : template &lt;typename Container&gt;</span>
+<span id="L257"><span class="lineNum">     257</span>              : QDataStream &amp;readAssociativeContainer(QDataStream &amp;s, Container &amp;c)</span>
+<span id="L258"><span class="lineNum">     258</span>              : {</span>
+<span id="L259"><span class="lineNum">     259</span>              :     StreamStateSaver stateSaver(&amp;s);</span>
+<span id="L260"><span class="lineNum">     260</span>              : </span>
+<span id="L261"><span class="lineNum">     261</span>              :     c.clear();</span>
+<span id="L262"><span class="lineNum">     262</span>              :     quint32 n;</span>
+<span id="L263"><span class="lineNum">     263</span>              :     s &gt;&gt; n;</span>
+<span id="L264"><span class="lineNum">     264</span>              :     for (quint32 i = 0; i &lt; n; ++i) {</span>
+<span id="L265"><span class="lineNum">     265</span>              :         typename Container::key_type k;</span>
+<span id="L266"><span class="lineNum">     266</span>              :         typename Container::mapped_type t;</span>
+<span id="L267"><span class="lineNum">     267</span>              :         s &gt;&gt; k &gt;&gt; t;</span>
+<span id="L268"><span class="lineNum">     268</span>              :         if (s.status() != QDataStream::Ok) {</span>
+<span id="L269"><span class="lineNum">     269</span>              :             c.clear();</span>
+<span id="L270"><span class="lineNum">     270</span>              :             break;</span>
+<span id="L271"><span class="lineNum">     271</span>              :         }</span>
+<span id="L272"><span class="lineNum">     272</span>              :         c.insert(k, t);</span>
+<span id="L273"><span class="lineNum">     273</span>              :     }</span>
+<span id="L274"><span class="lineNum">     274</span>              : </span>
+<span id="L275"><span class="lineNum">     275</span>              :     return s;</span>
+<span id="L276"><span class="lineNum">     276</span>              : }</span>
+<span id="L277"><span class="lineNum">     277</span>              : </span>
+<span id="L278"><span class="lineNum">     278</span>              : template &lt;typename Container&gt;</span>
+<span id="L279"><span class="lineNum">     279</span>              : QDataStream &amp;writeSequentialContainer(QDataStream &amp;s, const Container &amp;c)</span>
+<span id="L280"><span class="lineNum">     280</span>              : {</span>
+<span id="L281"><span class="lineNum">     281</span>              :     s &lt;&lt; quint32(c.size());</span>
+<span id="L282"><span class="lineNum">     282</span>              :     for (const typename Container::value_type &amp;t : c)</span>
+<span id="L283"><span class="lineNum">     283</span>              :         s &lt;&lt; t;</span>
+<span id="L284"><span class="lineNum">     284</span>              : </span>
+<span id="L285"><span class="lineNum">     285</span>              :     return s;</span>
+<span id="L286"><span class="lineNum">     286</span>              : }</span>
+<span id="L287"><span class="lineNum">     287</span>              : </span>
+<span id="L288"><span class="lineNum">     288</span>              : template &lt;typename Container&gt;</span>
+<span id="L289"><span class="lineNum">     289</span>              : QDataStream &amp;writeAssociativeContainer(QDataStream &amp;s, const Container &amp;c)</span>
+<span id="L290"><span class="lineNum">     290</span>              : {</span>
+<span id="L291"><span class="lineNum">     291</span>              :     s &lt;&lt; quint32(c.size());</span>
+<span id="L292"><span class="lineNum">     292</span>              :     auto it = c.constBegin();</span>
+<span id="L293"><span class="lineNum">     293</span>              :     auto end = c.constEnd();</span>
+<span id="L294"><span class="lineNum">     294</span>              :     while (it != end) {</span>
+<span id="L295"><span class="lineNum">     295</span>              :         s &lt;&lt; it.key() &lt;&lt; it.value();</span>
+<span id="L296"><span class="lineNum">     296</span>              :         ++it;</span>
+<span id="L297"><span class="lineNum">     297</span>              :     }</span>
+<span id="L298"><span class="lineNum">     298</span>              : </span>
+<span id="L299"><span class="lineNum">     299</span>              :     return s;</span>
+<span id="L300"><span class="lineNum">     300</span>              : }</span>
+<span id="L301"><span class="lineNum">     301</span>              : </span>
+<span id="L302"><span class="lineNum">     302</span>              : template &lt;typename Container&gt;</span>
+<span id="L303"><span class="lineNum">     303</span>              : QDataStream &amp;writeAssociativeMultiContainer(QDataStream &amp;s, const Container &amp;c)</span>
+<span id="L304"><span class="lineNum">     304</span>              : {</span>
+<span id="L305"><span class="lineNum">     305</span>              :     s &lt;&lt; quint32(c.size());</span>
+<span id="L306"><span class="lineNum">     306</span>              :     auto it = c.constBegin();</span>
+<span id="L307"><span class="lineNum">     307</span>              :     auto end = c.constEnd();</span>
+<span id="L308"><span class="lineNum">     308</span>              :     while (it != end) {</span>
+<span id="L309"><span class="lineNum">     309</span>              :         const auto rangeStart = it++;</span>
+<span id="L310"><span class="lineNum">     310</span>              :         while (it != end &amp;&amp; rangeStart.key() == it.key())</span>
+<span id="L311"><span class="lineNum">     311</span>              :             ++it;</span>
+<span id="L312"><span class="lineNum">     312</span>              :         const qint64 last = std::distance(rangeStart, it) - 1;</span>
+<span id="L313"><span class="lineNum">     313</span>              :         for (qint64 i = last; i &gt;= 0; --i) {</span>
+<span id="L314"><span class="lineNum">     314</span>              :             auto next = std::next(rangeStart, i);</span>
+<span id="L315"><span class="lineNum">     315</span>              :             s &lt;&lt; next.key() &lt;&lt; next.value();</span>
+<span id="L316"><span class="lineNum">     316</span>              :         }</span>
+<span id="L317"><span class="lineNum">     317</span>              :     }</span>
+<span id="L318"><span class="lineNum">     318</span>              : </span>
+<span id="L319"><span class="lineNum">     319</span>              :     return s;</span>
+<span id="L320"><span class="lineNum">     320</span>              : }</span>
+<span id="L321"><span class="lineNum">     321</span>              : </span>
+<span id="L322"><span class="lineNum">     322</span>              : } // QtPrivate namespace</span>
+<span id="L323"><span class="lineNum">     323</span>              : </span>
+<span id="L324"><span class="lineNum">     324</span>              : template&lt;typename ...T&gt;</span>
+<span id="L325"><span class="lineNum">     325</span>              : using QDataStreamIfHasOStreamOperators =</span>
+<span id="L326"><span class="lineNum">     326</span>              :     std::enable_if_t&lt;std::conjunction_v&lt;QTypeTraits::has_ostream_operator&lt;QDataStream, T&gt;...&gt;, QDataStream &amp;&gt;;</span>
+<span id="L327"><span class="lineNum">     327</span>              : template&lt;typename Container, typename ...T&gt;</span>
+<span id="L328"><span class="lineNum">     328</span>              : using QDataStreamIfHasOStreamOperatorsContainer =</span>
+<span id="L329"><span class="lineNum">     329</span>              :     std::enable_if_t&lt;std::conjunction_v&lt;QTypeTraits::has_ostream_operator_container&lt;QDataStream, Container, T&gt;...&gt;, QDataStream &amp;&gt;;</span>
+<span id="L330"><span class="lineNum">     330</span>              : </span>
+<span id="L331"><span class="lineNum">     331</span>              : template&lt;typename ...T&gt;</span>
+<span id="L332"><span class="lineNum">     332</span>              : using QDataStreamIfHasIStreamOperators =</span>
+<span id="L333"><span class="lineNum">     333</span>              :     std::enable_if_t&lt;std::conjunction_v&lt;QTypeTraits::has_istream_operator&lt;QDataStream, T&gt;...&gt;, QDataStream &amp;&gt;;</span>
+<span id="L334"><span class="lineNum">     334</span>              : template&lt;typename Container, typename ...T&gt;</span>
+<span id="L335"><span class="lineNum">     335</span>              : using QDataStreamIfHasIStreamOperatorsContainer =</span>
+<span id="L336"><span class="lineNum">     336</span>              :     std::enable_if_t&lt;std::conjunction_v&lt;QTypeTraits::has_istream_operator_container&lt;QDataStream, Container, T&gt;...&gt;, QDataStream &amp;&gt;;</span>
+<span id="L337"><span class="lineNum">     337</span>              : </span>
+<span id="L338"><span class="lineNum">     338</span>              : /*****************************************************************************</span>
+<span id="L339"><span class="lineNum">     339</span>              :   QDataStream inline functions</span>
+<span id="L340"><span class="lineNum">     340</span>              :  *****************************************************************************/</span>
+<span id="L341"><span class="lineNum">     341</span>              : </span>
+<span id="L342"><span class="lineNum">     342</span>              : inline QIODevice *QDataStream::device() const</span>
+<span id="L343"><span class="lineNum">     343</span>              : { return dev; }</span>
+<span id="L344"><span class="lineNum">     344</span>              : </span>
+<span id="L345"><span class="lineNum">     345</span>              : inline QDataStream::ByteOrder QDataStream::byteOrder() const</span>
+<span id="L346"><span class="lineNum">     346</span>              : { return byteorder; }</span>
+<span id="L347"><span class="lineNum">     347</span>              : </span>
+<span id="L348"><span class="lineNum">     348</span>              : inline int QDataStream::version() const</span>
+<span id="L349"><span class="lineNum">     349</span>              : { return ver; }</span>
+<span id="L350"><span class="lineNum">     350</span>              : </span>
+<span id="L351"><span class="lineNum">     351</span>              : inline void QDataStream::setVersion(int v)</span>
+<span id="L352"><span class="lineNum">     352</span>              : { ver = v; }</span>
+<span id="L353"><span class="lineNum">     353</span>              : </span>
+<span id="L354"><span class="lineNum">     354</span>              : inline QDataStream &amp;QDataStream::operator&gt;&gt;(char &amp;i)</span>
+<span id="L355"><span class="lineNum">     355</span>              : { return *this &gt;&gt; reinterpret_cast&lt;qint8&amp;&gt;(i); }</span>
+<span id="L356"><span class="lineNum">     356</span>              : </span>
+<span id="L357"><span class="lineNum">     357</span>              : inline QDataStream &amp;QDataStream::operator&gt;&gt;(quint8 &amp;i)</span>
+<span id="L358"><span class="lineNum">     358</span>              : { return *this &gt;&gt; reinterpret_cast&lt;qint8&amp;&gt;(i); }</span>
+<span id="L359"><span class="lineNum">     359</span>              : </span>
+<span id="L360"><span class="lineNum">     360</span>              : inline QDataStream &amp;QDataStream::operator&gt;&gt;(quint16 &amp;i)</span>
+<span id="L361"><span class="lineNum">     361</span>              : { return *this &gt;&gt; reinterpret_cast&lt;qint16&amp;&gt;(i); }</span>
+<span id="L362"><span class="lineNum">     362</span>              : </span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaUNC tlaBgUNC">           0 : inline QDataStream &amp;QDataStream::operator&gt;&gt;(quint32 &amp;i)</span></span>
+<span id="L364"><span class="lineNum">     364</span> <span class="tlaUNC">           0 : { return *this &gt;&gt; reinterpret_cast&lt;qint32&amp;&gt;(i); }</span></span>
+<span id="L365"><span class="lineNum">     365</span>              : </span>
+<span id="L366"><span class="lineNum">     366</span>              : inline QDataStream &amp;QDataStream::operator&gt;&gt;(quint64 &amp;i)</span>
+<span id="L367"><span class="lineNum">     367</span>              : { return *this &gt;&gt; reinterpret_cast&lt;qint64&amp;&gt;(i); }</span>
+<span id="L368"><span class="lineNum">     368</span>              : </span>
+<span id="L369"><span class="lineNum">     369</span>              : inline QDataStream &amp;QDataStream::operator&lt;&lt;(char i)</span>
+<span id="L370"><span class="lineNum">     370</span>              : { return *this &lt;&lt; qint8(i); }</span>
+<span id="L371"><span class="lineNum">     371</span>              : </span>
+<span id="L372"><span class="lineNum">     372</span>              : inline QDataStream &amp;QDataStream::operator&lt;&lt;(quint8 i)</span>
+<span id="L373"><span class="lineNum">     373</span>              : { return *this &lt;&lt; qint8(i); }</span>
+<span id="L374"><span class="lineNum">     374</span>              : </span>
+<span id="L375"><span class="lineNum">     375</span>              : inline QDataStream &amp;QDataStream::operator&lt;&lt;(quint16 i)</span>
+<span id="L376"><span class="lineNum">     376</span>              : { return *this &lt;&lt; qint16(i); }</span>
+<span id="L377"><span class="lineNum">     377</span>              : </span>
+<span id="L378"><span class="lineNum">     378</span> <span class="tlaUNC">           0 : inline QDataStream &amp;QDataStream::operator&lt;&lt;(quint32 i)</span></span>
+<span id="L379"><span class="lineNum">     379</span> <span class="tlaUNC">           0 : { return *this &lt;&lt; qint32(i); }</span></span>
+<span id="L380"><span class="lineNum">     380</span>              : </span>
+<span id="L381"><span class="lineNum">     381</span>              : inline QDataStream &amp;QDataStream::operator&lt;&lt;(quint64 i)</span>
+<span id="L382"><span class="lineNum">     382</span>              : { return *this &lt;&lt; qint64(i); }</span>
+<span id="L383"><span class="lineNum">     383</span>              : </span>
+<span id="L384"><span class="lineNum">     384</span>              : template &lt;typename Enum&gt;</span>
+<span id="L385"><span class="lineNum">     385</span>              : inline QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, QFlags&lt;Enum&gt; e)</span>
+<span id="L386"><span class="lineNum">     386</span>              : { return s &lt;&lt; typename QFlags&lt;Enum&gt;::Int(e); }</span>
+<span id="L387"><span class="lineNum">     387</span>              : </span>
+<span id="L388"><span class="lineNum">     388</span>              : template &lt;typename Enum&gt;</span>
+<span id="L389"><span class="lineNum">     389</span>              : inline QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QFlags&lt;Enum&gt; &amp;e)</span>
+<span id="L390"><span class="lineNum">     390</span>              : {</span>
+<span id="L391"><span class="lineNum">     391</span>              :     typename QFlags&lt;Enum&gt;::Int i;</span>
+<span id="L392"><span class="lineNum">     392</span>              :     s &gt;&gt; i;</span>
+<span id="L393"><span class="lineNum">     393</span>              :     e = QFlag(i);</span>
+<span id="L394"><span class="lineNum">     394</span>              :     return s;</span>
+<span id="L395"><span class="lineNum">     395</span>              : }</span>
+<span id="L396"><span class="lineNum">     396</span>              : </span>
+<span id="L397"><span class="lineNum">     397</span>              : template &lt;typename T&gt;</span>
+<span id="L398"><span class="lineNum">     398</span>              : typename std::enable_if_t&lt;std::is_enum&lt;T&gt;::value, QDataStream &amp;&gt;</span>
+<span id="L399"><span class="lineNum">     399</span> <span class="tlaUNC">           0 : operator&lt;&lt;(QDataStream &amp;s, const T &amp;t)</span></span>
+<span id="L400"><span class="lineNum">     400</span> <span class="tlaUNC">           0 : { return s &lt;&lt; static_cast&lt;typename std::underlying_type&lt;T&gt;::type&gt;(t); }</span></span>
+<span id="L401"><span class="lineNum">     401</span>              : </span>
+<span id="L402"><span class="lineNum">     402</span>              : template &lt;typename T&gt;</span>
+<span id="L403"><span class="lineNum">     403</span>              : typename std::enable_if_t&lt;std::is_enum&lt;T&gt;::value, QDataStream &amp;&gt;</span>
+<span id="L404"><span class="lineNum">     404</span> <span class="tlaUNC">           0 : operator&gt;&gt;(QDataStream &amp;s, T &amp;t)</span></span>
+<span id="L405"><span class="lineNum">     405</span> <span class="tlaUNC">           0 : { return s &gt;&gt; reinterpret_cast&lt;typename std::underlying_type&lt;T&gt;::type &amp;&gt;(t); }</span></span>
+<span id="L406"><span class="lineNum">     406</span>              : </span>
+<span id="L407"><span class="lineNum">     407</span>              : #ifndef Q_QDOC</span>
+<span id="L408"><span class="lineNum">     408</span>              : </span>
+<span id="L409"><span class="lineNum">     409</span>              : template&lt;typename T&gt;</span>
+<span id="L410"><span class="lineNum">     410</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QList&lt;T&gt;, T&gt; operator&gt;&gt;(QDataStream &amp;s, QList&lt;T&gt; &amp;v)</span>
+<span id="L411"><span class="lineNum">     411</span>              : {</span>
+<span id="L412"><span class="lineNum">     412</span>              :     return QtPrivate::readArrayBasedContainer(s, v);</span>
+<span id="L413"><span class="lineNum">     413</span>              : }</span>
+<span id="L414"><span class="lineNum">     414</span>              : </span>
+<span id="L415"><span class="lineNum">     415</span>              : template&lt;typename T&gt;</span>
+<span id="L416"><span class="lineNum">     416</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QList&lt;T&gt;, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QList&lt;T&gt; &amp;v)</span>
+<span id="L417"><span class="lineNum">     417</span>              : {</span>
+<span id="L418"><span class="lineNum">     418</span>              :     return QtPrivate::writeSequentialContainer(s, v);</span>
+<span id="L419"><span class="lineNum">     419</span>              : }</span>
+<span id="L420"><span class="lineNum">     420</span>              : </span>
+<span id="L421"><span class="lineNum">     421</span>              : template &lt;typename T&gt;</span>
+<span id="L422"><span class="lineNum">     422</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QSet&lt;T&gt;, T&gt; operator&gt;&gt;(QDataStream &amp;s, QSet&lt;T&gt; &amp;set)</span>
+<span id="L423"><span class="lineNum">     423</span>              : {</span>
+<span id="L424"><span class="lineNum">     424</span>              :     return QtPrivate::readListBasedContainer(s, set);</span>
+<span id="L425"><span class="lineNum">     425</span>              : }</span>
+<span id="L426"><span class="lineNum">     426</span>              : </span>
+<span id="L427"><span class="lineNum">     427</span>              : template &lt;typename T&gt;</span>
+<span id="L428"><span class="lineNum">     428</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QSet&lt;T&gt;, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QSet&lt;T&gt; &amp;set)</span>
+<span id="L429"><span class="lineNum">     429</span>              : {</span>
+<span id="L430"><span class="lineNum">     430</span>              :     return QtPrivate::writeSequentialContainer(s, set);</span>
+<span id="L431"><span class="lineNum">     431</span>              : }</span>
+<span id="L432"><span class="lineNum">     432</span>              : </span>
+<span id="L433"><span class="lineNum">     433</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L434"><span class="lineNum">     434</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QHash&lt;Key, T&gt;, Key, T&gt; operator&gt;&gt;(QDataStream &amp;s, QHash&lt;Key, T&gt; &amp;hash)</span>
+<span id="L435"><span class="lineNum">     435</span>              : {</span>
+<span id="L436"><span class="lineNum">     436</span>              :     return QtPrivate::readAssociativeContainer(s, hash);</span>
+<span id="L437"><span class="lineNum">     437</span>              : }</span>
+<span id="L438"><span class="lineNum">     438</span>              : </span>
+<span id="L439"><span class="lineNum">     439</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L440"><span class="lineNum">     440</span>              : </span>
+<span id="L441"><span class="lineNum">     441</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QHash&lt;Key, T&gt;, Key, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QHash&lt;Key, T&gt; &amp;hash)</span>
+<span id="L442"><span class="lineNum">     442</span>              : {</span>
+<span id="L443"><span class="lineNum">     443</span>              :     return QtPrivate::writeAssociativeContainer(s, hash);</span>
+<span id="L444"><span class="lineNum">     444</span>              : }</span>
+<span id="L445"><span class="lineNum">     445</span>              : </span>
+<span id="L446"><span class="lineNum">     446</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L447"><span class="lineNum">     447</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QMultiHash&lt;Key, T&gt;, Key, T&gt; operator&gt;&gt;(QDataStream &amp;s, QMultiHash&lt;Key, T&gt; &amp;hash)</span>
+<span id="L448"><span class="lineNum">     448</span>              : {</span>
+<span id="L449"><span class="lineNum">     449</span>              :     return QtPrivate::readAssociativeContainer(s, hash);</span>
+<span id="L450"><span class="lineNum">     450</span>              : }</span>
+<span id="L451"><span class="lineNum">     451</span>              : </span>
+<span id="L452"><span class="lineNum">     452</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L453"><span class="lineNum">     453</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QMultiHash&lt;Key, T&gt;, Key, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QMultiHash&lt;Key, T&gt; &amp;hash)</span>
+<span id="L454"><span class="lineNum">     454</span>              : {</span>
+<span id="L455"><span class="lineNum">     455</span>              :     return QtPrivate::writeAssociativeMultiContainer(s, hash);</span>
+<span id="L456"><span class="lineNum">     456</span>              : }</span>
+<span id="L457"><span class="lineNum">     457</span>              : </span>
+<span id="L458"><span class="lineNum">     458</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L459"><span class="lineNum">     459</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QMap&lt;Key, T&gt;, Key, T&gt; operator&gt;&gt;(QDataStream &amp;s, QMap&lt;Key, T&gt; &amp;map)</span>
+<span id="L460"><span class="lineNum">     460</span>              : {</span>
+<span id="L461"><span class="lineNum">     461</span>              :     return QtPrivate::readAssociativeContainer(s, map);</span>
+<span id="L462"><span class="lineNum">     462</span>              : }</span>
+<span id="L463"><span class="lineNum">     463</span>              : </span>
+<span id="L464"><span class="lineNum">     464</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L465"><span class="lineNum">     465</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QMap&lt;Key, T&gt;, Key, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QMap&lt;Key, T&gt; &amp;map)</span>
+<span id="L466"><span class="lineNum">     466</span>              : {</span>
+<span id="L467"><span class="lineNum">     467</span>              :     return QtPrivate::writeAssociativeContainer(s, map);</span>
+<span id="L468"><span class="lineNum">     468</span>              : }</span>
+<span id="L469"><span class="lineNum">     469</span>              : </span>
+<span id="L470"><span class="lineNum">     470</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L471"><span class="lineNum">     471</span>              : inline QDataStreamIfHasIStreamOperatorsContainer&lt;QMultiMap&lt;Key, T&gt;, Key, T&gt; operator&gt;&gt;(QDataStream &amp;s, QMultiMap&lt;Key, T&gt; &amp;map)</span>
+<span id="L472"><span class="lineNum">     472</span>              : {</span>
+<span id="L473"><span class="lineNum">     473</span>              :     return QtPrivate::readAssociativeContainer(s, map);</span>
+<span id="L474"><span class="lineNum">     474</span>              : }</span>
+<span id="L475"><span class="lineNum">     475</span>              : </span>
+<span id="L476"><span class="lineNum">     476</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L477"><span class="lineNum">     477</span>              : inline QDataStreamIfHasOStreamOperatorsContainer&lt;QMultiMap&lt;Key, T&gt;, Key, T&gt; operator&lt;&lt;(QDataStream &amp;s, const QMultiMap&lt;Key, T&gt; &amp;map)</span>
+<span id="L478"><span class="lineNum">     478</span>              : {</span>
+<span id="L479"><span class="lineNum">     479</span>              :     return QtPrivate::writeAssociativeMultiContainer(s, map);</span>
+<span id="L480"><span class="lineNum">     480</span>              : }</span>
+<span id="L481"><span class="lineNum">     481</span>              : </span>
+<span id="L482"><span class="lineNum">     482</span>              : template &lt;class T1, class T2&gt;</span>
+<span id="L483"><span class="lineNum">     483</span>              : inline QDataStreamIfHasIStreamOperators&lt;T1, T2&gt; operator&gt;&gt;(QDataStream&amp; s, std::pair&lt;T1, T2&gt; &amp;p)</span>
+<span id="L484"><span class="lineNum">     484</span>              : {</span>
+<span id="L485"><span class="lineNum">     485</span>              :     s &gt;&gt; p.first &gt;&gt; p.second;</span>
+<span id="L486"><span class="lineNum">     486</span>              :     return s;</span>
+<span id="L487"><span class="lineNum">     487</span>              : }</span>
+<span id="L488"><span class="lineNum">     488</span>              : </span>
+<span id="L489"><span class="lineNum">     489</span>              : template &lt;class T1, class T2&gt;</span>
+<span id="L490"><span class="lineNum">     490</span>              : inline QDataStreamIfHasOStreamOperators&lt;T1, T2&gt; operator&lt;&lt;(QDataStream&amp; s, const std::pair&lt;T1, T2&gt; &amp;p)</span>
+<span id="L491"><span class="lineNum">     491</span>              : {</span>
+<span id="L492"><span class="lineNum">     492</span>              :     s &lt;&lt; p.first &lt;&lt; p.second;</span>
+<span id="L493"><span class="lineNum">     493</span>              :     return s;</span>
+<span id="L494"><span class="lineNum">     494</span>              : }</span>
+<span id="L495"><span class="lineNum">     495</span>              : </span>
+<span id="L496"><span class="lineNum">     496</span>              : #else</span>
+<span id="L497"><span class="lineNum">     497</span>              : </span>
+<span id="L498"><span class="lineNum">     498</span>              : template &lt;class T&gt;</span>
+<span id="L499"><span class="lineNum">     499</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QList&lt;T&gt; &amp;l);</span>
+<span id="L500"><span class="lineNum">     500</span>              : </span>
+<span id="L501"><span class="lineNum">     501</span>              : template &lt;class T&gt;</span>
+<span id="L502"><span class="lineNum">     502</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QList&lt;T&gt; &amp;l);</span>
+<span id="L503"><span class="lineNum">     503</span>              : </span>
+<span id="L504"><span class="lineNum">     504</span>              : template &lt;class T&gt;</span>
+<span id="L505"><span class="lineNum">     505</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QSet&lt;T&gt; &amp;set);</span>
+<span id="L506"><span class="lineNum">     506</span>              : </span>
+<span id="L507"><span class="lineNum">     507</span>              : template &lt;class T&gt;</span>
+<span id="L508"><span class="lineNum">     508</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QSet&lt;T&gt; &amp;set);</span>
+<span id="L509"><span class="lineNum">     509</span>              : </span>
+<span id="L510"><span class="lineNum">     510</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L511"><span class="lineNum">     511</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QHash&lt;Key, T&gt; &amp;hash);</span>
+<span id="L512"><span class="lineNum">     512</span>              : </span>
+<span id="L513"><span class="lineNum">     513</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L514"><span class="lineNum">     514</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QHash&lt;Key, T&gt; &amp;hash);</span>
+<span id="L515"><span class="lineNum">     515</span>              : </span>
+<span id="L516"><span class="lineNum">     516</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L517"><span class="lineNum">     517</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QMultiHash&lt;Key, T&gt; &amp;hash);</span>
+<span id="L518"><span class="lineNum">     518</span>              : </span>
+<span id="L519"><span class="lineNum">     519</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L520"><span class="lineNum">     520</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QMultiHash&lt;Key, T&gt; &amp;hash);</span>
+<span id="L521"><span class="lineNum">     521</span>              : </span>
+<span id="L522"><span class="lineNum">     522</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L523"><span class="lineNum">     523</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QMap&lt;Key, T&gt; &amp;map);</span>
+<span id="L524"><span class="lineNum">     524</span>              : </span>
+<span id="L525"><span class="lineNum">     525</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L526"><span class="lineNum">     526</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QMap&lt;Key, T&gt; &amp;map);</span>
+<span id="L527"><span class="lineNum">     527</span>              : </span>
+<span id="L528"><span class="lineNum">     528</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L529"><span class="lineNum">     529</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QMultiMap&lt;Key, T&gt; &amp;map);</span>
+<span id="L530"><span class="lineNum">     530</span>              : </span>
+<span id="L531"><span class="lineNum">     531</span>              : template &lt;class Key, class T&gt;</span>
+<span id="L532"><span class="lineNum">     532</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, const QMultiMap&lt;Key, T&gt; &amp;map);</span>
+<span id="L533"><span class="lineNum">     533</span>              : </span>
+<span id="L534"><span class="lineNum">     534</span>              : template &lt;class T1, class T2&gt;</span>
+<span id="L535"><span class="lineNum">     535</span>              : QDataStream &amp;operator&gt;&gt;(QDataStream&amp; s, std::pair&lt;T1, T2&gt; &amp;p);</span>
+<span id="L536"><span class="lineNum">     536</span>              : </span>
+<span id="L537"><span class="lineNum">     537</span>              : template &lt;class T1, class T2&gt;</span>
+<span id="L538"><span class="lineNum">     538</span>              : QDataStream &amp;operator&lt;&lt;(QDataStream&amp; s, const std::pair&lt;T1, T2&gt; &amp;p);</span>
+<span id="L539"><span class="lineNum">     539</span>              : </span>
+<span id="L540"><span class="lineNum">     540</span>              : #endif // Q_QDOC</span>
+<span id="L541"><span class="lineNum">     541</span>              : </span>
+<span id="L542"><span class="lineNum">     542</span>              : inline QDataStream &amp;operator&gt;&gt;(QDataStream &amp;s, QKeyCombination &amp;combination)</span>
+<span id="L543"><span class="lineNum">     543</span>              : {</span>
+<span id="L544"><span class="lineNum">     544</span>              :     int combined;</span>
+<span id="L545"><span class="lineNum">     545</span>              :     s &gt;&gt; combined;</span>
+<span id="L546"><span class="lineNum">     546</span>              :     combination = QKeyCombination::fromCombined(combined);</span>
+<span id="L547"><span class="lineNum">     547</span>              :     return s;</span>
+<span id="L548"><span class="lineNum">     548</span>              : }</span>
+<span id="L549"><span class="lineNum">     549</span>              : </span>
+<span id="L550"><span class="lineNum">     550</span>              : inline QDataStream &amp;operator&lt;&lt;(QDataStream &amp;s, QKeyCombination combination)</span>
+<span id="L551"><span class="lineNum">     551</span>              : {</span>
+<span id="L552"><span class="lineNum">     552</span>              :     return s &lt;&lt; combination.toCombined();</span>
+<span id="L553"><span class="lineNum">     553</span>              : }</span>
+<span id="L554"><span class="lineNum">     554</span>              : </span>
+<span id="L555"><span class="lineNum">     555</span>              : #endif // QT_NO_DATASTREAM</span>
+<span id="L556"><span class="lineNum">     556</span>              : </span>
+<span id="L557"><span class="lineNum">     557</span>              : QT_END_NAMESPACE</span>
+<span id="L558"><span class="lineNum">     558</span>              : </span>
+<span id="L559"><span class="lineNum">     559</span>              : #endif // QDATASTREAM_H</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

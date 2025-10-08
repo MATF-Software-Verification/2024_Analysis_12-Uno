@@ -24,7 +24,7 @@ export GCOV=/usr/bin/gcov-10
 lcov --gcov-tool "$GCOV" --capture --directory . --output-file "$COVERAGE_DIR/coverage.info"
 
 # Opcionalno: Uključi samo relevantne fajlove (ako želiš da filtriraš nebitne fajlove)
-lcov --remove "$COVERAGE_DIR/coverage.info" '*/tests/*' '*/external/*' --output-file "$COVERAGE_DIR/coverage_filtered.info"
+lcov --remove "$COVERAGE_DIR/coverage.info" '/usr/include/*' "$HOME/Qt/*" '*/tests/*' '*/external/*' '*/build/*' --output-file "$COVERAGE_DIR/coverage_filtered.info"
 
 # Prezentuj pokrivenost u HTML formatu
 genhtml "$COVERAGE_DIR/coverage_filtered.info" --output-directory "$COVERAGE_DIR/html"

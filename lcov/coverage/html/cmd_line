@@ -1,1 +1,1 @@
-genhtml /home/marija/Desktop/2024_Analysis_12-Uno/lcov/coverage/coverage_filtered.info --output-directory /home/marija/Desktop/2024_Analysis_12-Uno/lcov/coverage/html
+genhtml /home/marija/Desktop/2024_Analysis_12-Uno/lcov/coverage_02/coverage_filtered.info --output-directory /home/marija/Desktop/2024_Analysis_12-Uno/lcov/coverage_02/html

@@ -1,0 +1,41 @@
+diff --git a/UNO/sources/game.cpp b/UNO/sources/game.cpp
+index 708845e..a3e13ce 100644
+--- a/UNO/sources/game.cpp
++++ b/UNO/sources/game.cpp
+@@ -75,6 +75,10 @@ void Game::setupBoard()
+ 
+ Game::~Game()
+ {
++    for (Player* player : players) {
++        delete player;
++    }
++    players.clear();
+     delete deck;
+     delete pile;
+ }
+diff --git a/specification/tests/test_pile.cpp b/specification/tests/test_pile.cpp
+index 58851e0..e5eed88 100644
+--- a/specification/tests/test_pile.cpp
++++ b/specification/tests/test_pile.cpp
+@@ -34,14 +34,18 @@ TEST_CASE("Testing correctness of methods in class Pile", "[pile]")
+     {
+         // Arrange
+         Pile *newPile = new Pile();
+-        Card *card = new Card();
++        Card *cardExtra = new Card();
+ 
+         // Act
+-        for (int i=0; i<DECK_SIZE; i++)
++        for (int i=0; i<DECK_SIZE; i++){
++            Card *card = new Card();
+             newPile->pushCard(card);
++        }
+ 
+         // Assert
+-        REQUIRE_THROWS(newPile->pushCard(card));
++        REQUIRE_THROWS(newPile->pushCard(cardExtra));
++        delete newPile;
++        delete cardExtra;
+     }
+ 
+     SECTION("If the pile is not full, method pushCard() should add"

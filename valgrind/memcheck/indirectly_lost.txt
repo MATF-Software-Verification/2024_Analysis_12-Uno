@@ -1,0 +1,30 @@
+==89998== 24 bytes in 1 blocks are indirectly lost in loss record 2,206 of 7,505
+==89998==    at 0x4846FA3: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89998==    by 0x2024F2: C_A_T_C_H_T_E_S_T_0() (test_pile.cpp:37)
+==89998==    by 0x14415D: Catch::TestInvokerAsFunction::invoke() const (catch.hpp:14330)
+==89998==    by 0x143394: Catch::TestCase::invoke() const (catch.hpp:14169)
+==89998==    by 0x13D69F: Catch::RunContext::invokeActiveTestCase() (catch.hpp:13025)
+==89998==    by 0x13D3C4: Catch::RunContext::runCurrentTest(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&) (catch.hpp:12998)
+==89998==    by 0x13BE50: Catch::RunContext::runTest(Catch::TestCase const&) (catch.hpp:12759)
+==89998==    by 0x13F045: Catch::(anonymous namespace)::TestGroup::execute() (catch.hpp:13352)
+==89998==    by 0x1404AC: Catch::Session::runInternal() (catch.hpp:13562)
+==89998==    by 0x140186: Catch::Session::run() (catch.hpp:13518)
+==89998==    by 0x1812EE: int Catch::Session::run<char>(int, char const* const*) (catch.hpp:13236)
+==89998==    by 0x15735F: main (main.cpp:8)
+==89998== 
+
+==89998== 1,026 bytes in 1 blocks are indirectly lost in loss record 7,324 of 7,505
+==89998==    at 0x484DB80: realloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89998==    by 0x5CBB920: QArrayData::reallocateUnaligned(QArrayData*, void*, long long, long long, QArrayData::AllocationOption) (in /home/marija/Qt/6.5.3/gcc_64/lib/libQt6Core.so.6.5.3)
+==89998==    by 0x23358A: QTypedArrayData<Card*>::reallocateUnaligned(QTypedArrayData<Card*>*, Card**, long long, QArrayData::AllocationOption) (qarraydata.h:117)
+==89998==    by 0x232F8C: QtPrivate::QPodArrayOps<Card*>::reallocate(long long, QArrayData::AllocationOption) (qarraydataops.h:259)
+==89998==    by 0x2327F2: QArrayDataPointer<Card*>::reallocateAndGrow(QArrayData::GrowthPosition, long long, QArrayDataPointer<Card*>*) (qarraydatapointer.h:208)
+==89998==    by 0x232B1A: QArrayDataPointer<Card*>::detachAndGrow(QArrayData::GrowthPosition, long long, Card* const**, QArrayDataPointer<Card*>*) (qarraydatapointer.h:194)
+==89998==    by 0x232208: void QtPrivate::QPodArrayOps<Card*>::emplace<Card*&>(long long, Card*&) (qarraydataops.h:174)
+==89998==    by 0x231707: Card*& QList<Card*>::emplaceBack<Card*&>(Card*&) (qlist.h:856)
+==89998==    by 0x230E12: QList<Card*>::append(Card*) (qlist.h:433)
+==89998==    by 0x230A08: QList<Card*>::push_back(Card*) (qlist.h:651)
+==89998==    by 0x235E09: Pile::pushCard(Card*) (pile.cpp:17)
+==89998==    by 0x202530: C_A_T_C_H_T_E_S_T_0() (test_pile.cpp:41)
+==89998== 
+

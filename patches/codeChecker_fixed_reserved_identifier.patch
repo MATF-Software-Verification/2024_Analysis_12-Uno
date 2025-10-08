@@ -1,0 +1,205 @@
+diff --git a/UNO/sources/gameGUI.cpp b/UNO/sources/gameGUI.cpp
+index 3d625d3..8a5d534 100644
+--- a/UNO/sources/gameGUI.cpp
++++ b/UNO/sources/gameGUI.cpp
+@@ -24,16 +24,16 @@
+ 
+ // find a better way to do this, problem is that geometry (width,heigth)
+ // of main window dont update until constructor finishes
+-int _width = 1920;
+-int _height = 1080;
++int g_width = 1920;
++int g_height = 1080;
+ 
+ // for scaling when more players
+-int _frameWidth = 700;
+-int _frameHeight = 180;
++int g_frameWidth = 700;
++int g_frameHeight = 180;
+ 
+ // for scaling with 8 players
+-int _reducedWidth = 460;
+-int _reducedHeight = 130;
++int g_reducedWidth = 460;
++int g_reducedHeight = 130;
+ 
+ GameGUI::GameGUI(QWidget *parent, GameParameters *gameParams)
+     : QWidget(parent)
+@@ -171,18 +171,18 @@ auto GameGUI::generateFrame(QString position) -> QFrame *
+ {
+     auto *frame = new QFrame(this);
+     if (position == "down")
+-        frame->setGeometry(_width / 2 - _frameWidth / 2,
+-                           _height - _frameHeight * 2 + 30, _frameWidth,
++        frame->setGeometry(g_width / 2 - g_frameWidth / 2,
++                           g_height - g_frameHeight * 2 + 30, g_frameWidth,
+                            _frameHeight);
+     else if (position == "up")
+-        frame->setGeometry(_width / 2 - _frameWidth / 2, 0, _frameWidth,
++        frame->setGeometry(g_width / 2 - g_frameWidth / 2, 0, g_frameWidth,
+                            _frameHeight);
+     else if (position == "right")
+-        frame->setGeometry(_width - _frameWidth - 10,
+-                           _height / 2 - _frameHeight, _frameWidth,
++        frame->setGeometry(g_width - g_frameWidth - 10,
++                           g_height / 2 - _frameHeight, g_frameWidth,
+                            _frameHeight);
+     else if (position == "left")
+-        frame->setGeometry(0, _height / 2 - _frameHeight, _frameWidth,
++        frame->setGeometry(0, g_height / 2 - _frameHeight, g_frameWidth,
+                            _frameHeight);
+ 
+     frame->setLayout(new QHBoxLayout());
+@@ -193,36 +193,36 @@ auto GameGUI::generateFrame8Players(QString position) -> QFrame *
+ {
+     auto *frame = new QFrame(this);
+     if (position == "down")
+-        frame->setGeometry(_width / 2 - _frameWidth / 2 - 50,
+-                           _height - _frameHeight * 2, _frameWidth,
++        frame->setGeometry(g_width / 2 - g_frameWidth / 2 - 50,
++                           g_height - g_frameHeight * 2, g_frameWidth,
+                            _frameHeight);
+     else if (position == "up1")
+-        frame->setGeometry(_width / 2 - _reducedWidth / 2, 0, _reducedWidth,
+-                           _reducedHeight);
++        frame->setGeometry(g_width / 2 - g_reducedWidth / 2, 0, g_reducedWidth,
++                           g_reducedHeight);
+     else if (position == "right1")
+-        frame->setGeometry(_width - _reducedWidth - 100,
+-                           _height - _frameHeight * 2 - _reducedHeight + 50,
+-                           _reducedWidth, _reducedHeight);
++        frame->setGeometry(g_width - g_reducedWidth - 100,
++                           g_height - g_frameHeight * 2 - g_reducedHeight + 50,
++                           g_reducedWidth, g_reducedHeight);
+     else if (position == "right2")
+-        frame->setGeometry((_width - _reducedWidth) - 100,
+-                           _height - _frameHeight * 2 - _reducedHeight * 3 + 50,
+-                           _reducedWidth, _reducedHeight);
++        frame->setGeometry((g_width - g_reducedWidth) - 100,
++                           g_height - g_frameHeight * 2 - g_reducedHeight * 3 + 50,
++                           g_reducedWidth, g_reducedHeight);
+     else if (position == "right3")
+-        frame->setGeometry((_width - _reducedWidth) - 100,
+-                           _height - _frameHeight * 2 - _reducedHeight * 5 + 50,
+-                           _reducedWidth, _reducedHeight);
++        frame->setGeometry((g_width - g_reducedWidth) - 100,
++                           g_height - g_frameHeight * 2 - g_reducedHeight * 5 + 50,
++                           g_reducedWidth, g_reducedHeight);
+     else if (position == "left1")
+         frame->setGeometry(100,
+-                           _height - _frameHeight * 2 - _reducedHeight * 5 + 50,
+-                           _reducedWidth, _reducedHeight);
++                           g_height - g_frameHeight * 2 - g_reducedHeight * 5 + 50,
++                           g_reducedWidth, g_reducedHeight);
+     else if (position == "left2")
+         frame->setGeometry(100,
+-                           _height - _frameHeight * 2 - _reducedHeight * 3 + 50,
+-                           _reducedWidth, _reducedHeight);
++                           g_height - g_frameHeight * 2 - g_reducedHeight * 3 + 50,
++                           g_reducedWidth, g_reducedHeight);
+     else if (position == "left3")
+         frame->setGeometry(100,
+-                           _height - _frameHeight * 2 - _reducedHeight + 50,
+-                           _reducedWidth, _reducedHeight);
++                           g_height - g_frameHeight * 2 - g_reducedHeight + 50,
++                           g_reducedWidth, g_reducedHeight);
+ 
+     frame->setLayout(new QHBoxLayout());
+     return frame;
+@@ -235,41 +235,41 @@ auto GameGUI::generateButton(QString position, QFrame *frame) -> QPushButton *
+     int frameYPos = frame->geometry().y();
+     int btnSize = 35;
+     if (position == "up")
+-        btn->setGeometry(frameXPos + _frameWidth + 50,
+-                         frameYPos + (_frameHeight / 2) - 10, btnSize, btnSize);
++        btn->setGeometry(frameXPos + g_frameWidth + 50,
++                         frameYPos + (g_frameHeight / 2) - 10, btnSize, btnSize);
+     else if (position == "down")
+-        btn->setGeometry(frameXPos + _frameWidth + 50,
+-                         frameYPos + (_frameHeight / 2) - 10, btnSize, btnSize);
++        btn->setGeometry(frameXPos + g_frameWidth + 50,
++                         frameYPos + (g_frameHeight / 2) - 10, btnSize, btnSize);
+     else if (position == "right" || position == "left")
+-        btn->setGeometry(frameXPos + _frameWidth / 2 - btnSize / 2,
++        btn->setGeometry(frameXPos + g_frameWidth / 2 - btnSize / 2,
+                          frameYPos - btnSize, btnSize, btnSize);
+     else if (position == "right1")
+         btn->setGeometry(frameXPos - 50,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "right2")
+         btn->setGeometry(frameXPos - 50,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "right3")
+         btn->setGeometry(frameXPos - 50,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "left1")
+-        btn->setGeometry(frameXPos + _reducedWidth + 10,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++        btn->setGeometry(frameXPos + g_reducedWidth + 10,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "left2")
+-        btn->setGeometry(frameXPos + _reducedWidth + 10,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++        btn->setGeometry(frameXPos + g_reducedWidth + 10,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "left3")
+-        btn->setGeometry(frameXPos + _reducedWidth + 10,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 120,
++        btn->setGeometry(frameXPos + g_reducedWidth + 10,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 120,
+                          btnSize, btnSize);
+     else if (position == "up1")
+-        btn->setGeometry(frameXPos + _reducedWidth + 10,
+-                         frameYPos + _frameHeight / 2 - 45, btnSize, btnSize);
++        btn->setGeometry(frameXPos + g_reducedWidth + 10,
++                         frameYPos + g_frameHeight / 2 - 45, btnSize, btnSize);
+ 
+     btn->setStyleSheet("QPushButton {background-color: red}"
+                        "{border-radius: 15px}");
+@@ -284,30 +284,30 @@ auto GameGUI::generateLabel(QString position, QFrame *frame) -> QLabel *
+     int lblSize = 100;
+     if (position == "up")
+         lbl->setGeometry(frameXPos - lblSize + 30,
+-                         frameYPos + _frameHeight / 2 - 15, lblSize,
++                         frameYPos + g_frameHeight / 2 - 15, lblSize,
+                          lblSize / 2);
+     else if (position == "down")
+         lbl->setGeometry(frameXPos - lblSize + 30,
+-                         frameYPos + _frameHeight / 2 - 10, lblSize,
++                         frameYPos + g_frameHeight / 2 - 10, lblSize,
+                          lblSize / 2);
+     else if (position == "right" || position == "left")
+-        lbl->setGeometry(frameXPos + _frameWidth / 2 - lblSize / 4 - 5,
++        lbl->setGeometry(frameXPos + g_frameWidth / 2 - lblSize / 4 - 5,
+                          frameYPos + _frameHeight, lblSize, lblSize);
+     else if (position == "right1" || position == "right3" ||
+              position == "right2")
+         lbl->setGeometry(frameXPos - 70,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 20,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 20,
+                          lblSize, lblSize);
+     else if (position == "left1" || position == "left2" || position == "left3")
+-        lbl->setGeometry(frameXPos + _reducedWidth + 10,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 20,
++        lbl->setGeometry(frameXPos + g_reducedWidth + 10,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 20,
+                          lblSize, lblSize);
+     else if (position == "up1")
+         lbl->setGeometry(frameXPos - lblSize + 30,
+-                         frameYPos + _reducedHeight / 2 - 50, lblSize, lblSize);
++                         frameYPos + g_reducedHeight / 2 - 50, lblSize, lblSize);
+     else
+         lbl->setGeometry(frameXPos - 70,
+-                         frameYPos + (_frameHeight / 2) - _reducedHeight + 10,
++                         frameYPos + (g_frameHeight / 2) - g_reducedHeight + 10,
+                          lblSize, lblSize);
+     return lbl;
+ }

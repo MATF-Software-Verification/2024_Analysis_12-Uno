@@ -1,0 +1,36 @@
+diff --git a/UNO/sources/gameGUI.cpp b/UNO/sources/gameGUI.cpp
+index 3d625d3..b7f01ba 100644
+--- a/UNO/sources/gameGUI.cpp
++++ b/UNO/sources/gameGUI.cpp
+@@ -951,6 +951,7 @@ void GameGUI::displayWinner()
+ 
+ void GameGUI::closeEvent(QCloseEvent *event)
+ {
++    Q_UNUSED(event);
+     delete audioOutput;
+     delete mediaPlayer;
+ 
+diff --git a/UNO/sources/instructionsWidget.cpp b/UNO/sources/instructionsWidget.cpp
+index 3453f82..0490f84 100644
+--- a/UNO/sources/instructionsWidget.cpp
++++ b/UNO/sources/instructionsWidget.cpp
+@@ -17,6 +17,7 @@ InstructionsWidget::~InstructionsWidget() { delete ui; }
+ 
+ void InstructionsWidget::closeEvent(QCloseEvent *event)
+ {
++    Q_UNUSED(event);
+     auto *mw = new MainWindow();
+     mw->adjustSize();
+     mw->move(QWidget::screen()->availableGeometry().center() -
+diff --git a/UNO/sources/server.cpp b/UNO/sources/server.cpp
+index 4b7da4d..7ccf95d 100644
+--- a/UNO/sources/server.cpp
++++ b/UNO/sources/server.cpp
+@@ -29,7 +29,6 @@ void Server::setNumberOfPlayers(int number) { _numberOfPlayers = number; }
+ 
+ void Server::run()
+ {
+-    bool fail = false;
+ 
+     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+     if (sockfd == -1)

@@ -1,0 +1,23 @@
+diff --git a/UNO/sources/game.cpp b/UNO/sources/game.cpp
+index 708845e..a91d504 100644
+--- a/UNO/sources/game.cpp
++++ b/UNO/sources/game.cpp
+@@ -11,6 +11,9 @@
+ #include <memory>
+ #include <string>
+ 
++#include <QtGlobal>
++#include <cstdlib>
++
+ Game::Game(QObject *parent)
+     : QThread(parent)
+ {
+@@ -49,6 +52,8 @@ void Game::setupParams(GameParameters *gameParams)
+         gameMode = GAME_MODE::DEADLY;
+         eliminations = true;
+         break;
++    default:
++        qFatal("Ne dozvoljena operacija: nepoznati game mode");
+     }
+ 
+     mainPlayer = new Human(gameParams->mainPlayerName, this);

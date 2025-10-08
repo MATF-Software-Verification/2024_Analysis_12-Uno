@@ -1,0 +1,21 @@
+diff --git a/UNO/sources/game.cpp b/UNO/sources/game.cpp
+index 708845e..a3eedba 100644
+--- a/UNO/sources/game.cpp
++++ b/UNO/sources/game.cpp
+@@ -345,14 +345,14 @@ void Game::processTurn(QString message_)
+         pile = new Pile();
+         pile->pushCard(topCard);
+ 
+-        int deckSize = (int)message[i];
++        int deckSize = static_cast<int>(static_cast<unsigned char>(message[i]));
+         i++;
+ 
+         QVector<int> hashVector(deckSize);
+ 
+         for (int j = 0; j < deckSize; j++)
+         {
+-            hashVector[j] = (int)message[i];
++            hashVector[j] = static_cast<int>(static_cast<unsigned char>(message[i]));
+             i++;
+         }
+         loadDeck(hashVector);

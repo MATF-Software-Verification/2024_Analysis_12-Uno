@@ -29,7 +29,7 @@ Rezultati svakog alata mogu se reprodukovati pozicioniranjem u istoimenom direkt
     - Instalacija: ```pip3 install codechecker``` ili praćenjem [uputstva](https://codechecker.readthedocs.io/en/latest/#linux-build-from-source) za kompajliranje iz izvornog koda 
     - Pokretanje: Pre pokretanja alata potrebno je napraviti izmene u CMakeLists.txt na način definisan u *2024_Analysis_12-Uno/patches/qt_fix.patch* fajlu. U direktorijumu *2024_Analysis_12-Uno/codeChecker* pokrenuti ```./run_codeChecker.sh``` skript fajl.
 - **3. lcov**
--    - Instalacija: ```sudo apt-get install lcov```
+    - Instalacija: ```sudo apt-get install lcov```
     - Pokretanje: Pre pokretanja alata potrebno je napraviti izmene u CMakeLists.txt na način definisan u *2024_Analysis_12-Uno/patches/lcov_cmake_flags.patch* fajlu. U direktorijumu *2024_Analysis_12-Uno/lcov* pokrenuti ```./run_lcov.sh``` skript fajl.
 - **4. Memcheck**
     - Instalacija: ```sudo apt-get install valgrind```
@@ -39,4 +39,4 @@ Rezultati svakog alata mogu se reprodukovati pozicioniranjem u istoimenom direkt
 ## Zaključak
 Ključni rezultati analize ukazuju da je neophodno napisati dodatne testove koji bi povećali pokrivenost koda i time testirali veći broj komponenti sistema. Prilikom implementacije testova potrebno je više pažnje posvetiti curenju memorije koja nastaje tokom njihovog izvršavanja. Dodatno je potrebno izbegavati korišćenje default-nog konstruktora u testovima koji porede objekte, kako ne bi dolazilo do nedefinisog ponašanja koje prouzrokuje pad testova.
 
-Ovim radom pokazana je značajnost alata za verifikaciju softvera, čak i kada program naizgled funkcioniše ispravno. Detaljan izveštaj i zaključci mogu se pronaći u fajlu [ProjectAnalysisReport.pdf](\\\\).
+Ovim radom pokazana je značajnost alata za verifikaciju softvera, čak i kada program naizgled funkcioniše ispravno. Detaljan izveštaj i zaključci mogu se pronaći u fajlu [ProjectAnalysisReport.pdf](https://github.com/MATF-Software-Verification/2024_Analysis_12-Uno/blob/main/ProjectAnalysisReport.pdf).
